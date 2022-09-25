@@ -3,6 +3,7 @@ const dbConnect = require("./config/db/dbConnect");
 const app = express();
 const dotenv = require("dotenv");
 const userRoutes = require("./route/users/usersRoute");
+const { errorHandler } = require("./middlewares/error/errorHandler");
 // Config env file
 dotenv.config();
 
@@ -14,6 +15,9 @@ app.use(express.json());
 
 // Users route
 app.use("/api/users", userRoutes);
+
+// error handler: MUST below all the routes
+app.use(errorHandler);
 
 // server
 const PORT = process.env.PORT || 5000;
