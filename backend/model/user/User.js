@@ -101,13 +101,19 @@ const userSchema = new mongoose.Schema(
 );
 
 // Hash password
-
 userSchema.pre("save", async function (next) {
   // hash password
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hashSync(this.password, salt);
   next();
 });
+
+// Match password
+// Docs: https://mongoosejs.com/docs/guide.html#methods
+// Note: MUST USE Expression function [function(){}], can not use arrow func
+userSchema.methods.isPasswordMatched = async function (enteredPassword) {
+  return await bcrypt.compare(enteredPassword, this.password);
+};
 
 // Compile schema into model
 const User = mongoose.model("User", userSchema);
