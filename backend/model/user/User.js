@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 const schemaOptions = require("../../config/model/schemaOptions");
 
 // create Schema
@@ -97,6 +98,15 @@ const userSchema = new mongoose.Schema(
   },
   schemaOptions
 );
+
+// Hash password
+
+userSchema.pre("save", async function (next) {
+  // hash password
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hashSync(this.password, salt);
+  next();
+});
 
 // Compile schema into model
 const User = mongoose.model("User", userSchema);
