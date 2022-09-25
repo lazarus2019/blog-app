@@ -21,6 +21,7 @@ const userSchema = new mongoose.Schema(
     email: {
       required: [true, "Email is required"],
       type: String,
+      unique: true,
     },
     bio: {
       type: String,
