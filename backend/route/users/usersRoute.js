@@ -2,6 +2,9 @@ const express = require("express");
 const {
   registerUserCtrl,
   loginUserCtrl,
+  fetchUsersCtrl,
+  deleteUsersCtrl,
+  fetchUserDetailCtrl,
 } = require("../../controllers/users/usersCtrl");
 
 const userRoutes = express.Router();
@@ -9,9 +12,11 @@ const userRoutes = express.Router();
 userRoutes.post("/register", registerUserCtrl);
 
 userRoutes.post("/login", loginUserCtrl);
-//fetch all user
-userRoutes.get("/", (req, res) => {
-  res.json({ user: "Fetch all users" });
-});
+
+userRoutes.get("/", fetchUsersCtrl);
+
+userRoutes.delete("/:id", deleteUsersCtrl);
+
+userRoutes.get("/:id", fetchUserDetailCtrl);
 
 module.exports = userRoutes;
