@@ -1,9 +1,13 @@
 # Blog App MERN stack
+
 Learn, Apply, Build a Blog Project using Redux (Redux Toolkit), NodeJs, Express, MongoDB, React js, Tailwindcss
 
+[Course](https://www.udemy.com/course/mern-stack-complete-blog-application-from-scratch-2021/)
 
 ## APIs
+
 ### Post API
+
 - Delete, update, create, read
 - File upload
 - Like, dislike
@@ -13,6 +17,7 @@ Learn, Apply, Build a Blog Project using Redux (Redux Toolkit), NodeJs, Express,
 - Add category
 
 ### Users API
+
 - File upload to cloudinary
 - Image Sesising
 - Authentication
@@ -36,4 +41,3 @@ Learn, Apply, Build a Blog Project using Redux (Redux Toolkit), NodeJs, Express,
 - Unhealthy words
 - Make post public or private
 - Make your profile private for only login users
-
