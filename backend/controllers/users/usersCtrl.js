@@ -1,6 +1,12 @@
 const expressAsyncHandler = require("express-async-handler");
 const generateToken = require("../../config/token/generateToken");
+const crypto = require("crypto");
 const User = require("../../model/user/User");
+const {
+  mailgun,
+  verifyEmailTemplate,
+  mailHeader,
+} = require("../../utils/mailgun");
 const validateMongodbId = require("../../utils/validateMongodbID");
 
 //// Register user
@@ -210,7 +216,7 @@ const blockUserCtrl = expressAsyncHandler(async (req, res) => {
   res.json("Block user successfully");
 });
 
-//// Block user
+//// Un-Block user
 const unBlockUserCtrl = expressAsyncHandler(async (req, res) => {
   const { id } = req.params;
   validateMongodbId(id);
@@ -221,6 +227,62 @@ const unBlockUserCtrl = expressAsyncHandler(async (req, res) => {
   });
 
   res.json("Un-Block user successfully");
+});
+
+//// Generate verification token
+const generateVerificationTokenCtrl = expressAsyncHandler(async (req, res) => {
+  const { email, firstName, lastName } = req.user;
+  const loginUserId = req.user.id;
+
+  const user = await User.findById(loginUserId);
+
+  // Generate token
+  const verificationToken = await user.createAccountVerificationToken();
+  console.log(verificationToken);
+  try {
+    await user.save();
+
+    const msg = mailHeader({
+      email,
+      firstName,
+      lastName,
+      verificationToken,
+    });
+
+    await mailgun()
+      .messages()
+      .send(msg, (error, body) => {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log(body);
+        }
+      });
+  } catch (error) {
+    throw new Error("Can not send the email");
+  }
+  res.json({ verificationToken });
+});
+
+//// Account verification
+const accountVerificationCtrl = expressAsyncHandler(async (req, res) => {
+  const { token } = req.body;
+  const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+  // find this user by token
+  const userFound = await User.findOne({
+    accountVerificationToken: hashedToken,
+    accountVerificationTokenExpires: { $gt: new Date() },
+  });
+
+  if (!userFound) throw new Error("Token expired, try again later");
+  // Update the props to true
+  userFound.isAccountVerified = true;
+  userFound.accountVerificationToken = undefined;
+  userFound.accountVerificationTokenExpires = undefined;
+  await userFound.save();
+
+  res.json(userFound);
 });
 
 module.exports = {
@@ -237,4 +299,6 @@ module.exports = {
   unFollowUserCtrl,
   blockUserCtrl,
   unBlockUserCtrl,
+  generateVerificationTokenCtrl,
+  accountVerificationCtrl,
 };
