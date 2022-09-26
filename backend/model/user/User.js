@@ -34,9 +34,13 @@ const userSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    isBlocked: {
-      type: Boolean,
-      default: false,
+    blockUsers: {
+      type: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
+      ],
     },
     isAdmin: {
       type: Boolean,
@@ -45,14 +49,6 @@ const userSchema = new mongoose.Schema(
     role: {
       type: String,
       enum: ["Admin", "Guest", "Blogger"],
-    },
-    isFollowing: {
-      type: Boolean,
-      default: false,
-    },
-    isUnFollowing: {
-      type: Boolean,
-      default: false,
     },
     isAccountVerified: {
       type: Boolean,
