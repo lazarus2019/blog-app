@@ -8,6 +8,8 @@ const {
   userProfileCtrl,
   updateUserCtrl,
   updateUserPasswordCtrl,
+  followingUserCtrl,
+  unFollowUserCtrl,
 } = require("../../controllers/users/usersCtrl");
 const authMiddleware = require("../../middlewares/auth/authMiddleware");
 
@@ -21,9 +23,14 @@ userRoutes.get("/", authMiddleware, fetchUsersCtrl);
 
 userRoutes.get("/profile/:id", authMiddleware, userProfileCtrl);
 
-userRoutes.put("/:id", authMiddleware, updateUserCtrl);
+userRoutes.put("/password", authMiddleware, updateUserPasswordCtrl);
 
-userRoutes.put("/password/", authMiddleware, updateUserPasswordCtrl);
+userRoutes.put("/follow", authMiddleware, followingUserCtrl);
+
+userRoutes.put("/unFollow", authMiddleware, unFollowUserCtrl);
+
+// Bring all the routes with dynamic ids /:id below other routes
+userRoutes.put("/:id", authMiddleware, updateUserCtrl);
 
 userRoutes.delete("/:id", deleteUsersCtrl);
 

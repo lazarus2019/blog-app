@@ -125,12 +125,76 @@ const updateUserPasswordCtrl = expressAsyncHandler(async (req, res) => {
   // Find the user by _id
   const user = await User.findById(_id);
 
-  if (password) {
+  if (password && !(await user.isPasswordMatched(password))) {
     user.password = password;
     const updatedUser = await user.save();
-    res.json(updatedUser);
+    // Put `return` before the res if cannot set header error appear
+    return res.json(updatedUser);
   }
   res.json(user);
+});
+
+//// Following user
+const followingUserCtrl = expressAsyncHandler(async (req, res) => {
+  const { followId } = req.body;
+  const loginUserId = req.user.id;
+
+  // Find the target user and check if the login id exist
+  const targetUser = await User.findById(followId);
+
+  const alreadyFollowing = targetUser?.followers?.find(
+    (user) => user?.toString() === loginUserId.toString()
+  );
+
+  if (alreadyFollowing) throw new Error("You already followed this user");
+
+  // 1. Find the user you want to follow and update it's followers field
+  await User.findByIdAndUpdate(
+    followId,
+    {
+      // append a specified value to an array
+      // Docs: https://www.mongodb.com/docs/manual/reference/operator/update/push/
+      $push: { followers: loginUserId },
+    },
+    { new: true }
+  );
+
+  // 2. Update the login user following field
+  await User.findByIdAndUpdate(
+    loginUserId,
+    {
+      $push: { following: followId },
+    },
+    { new: true }
+  );
+
+  res.json("following");
+});
+
+//// UnFollowing user
+const unFollowUserCtrl = expressAsyncHandler(async (req, res) => {
+  const { unFollowId } = req.body;
+  const loginUserId = req.user.id;
+
+  await User.findByIdAndUpdate(
+    unFollowId,
+    {
+      // remove all instances of value match
+      // Docs: https://www.mongodb.com/docs/manual/reference/operator/update/pull/
+      $pull: { followers: loginUserId },
+    },
+    { new: true }
+  );
+
+  await User.findByIdAndUpdate(
+    loginUserId,
+    {
+      $pull: { following: unFollowId },
+    },
+    { new: true }
+  );
+
+  res.json("You have successfully unfollowed this user");
 });
 
 module.exports = {
@@ -143,4 +207,6 @@ module.exports = {
   userProfileCtrl,
   updateUserCtrl,
   updateUserPasswordCtrl,
+  followingUserCtrl,
+  unFollowUserCtrl,
 };
