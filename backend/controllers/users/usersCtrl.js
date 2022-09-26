@@ -2,11 +2,7 @@ const expressAsyncHandler = require("express-async-handler");
 const generateToken = require("../../config/token/generateToken");
 const crypto = require("crypto");
 const User = require("../../model/user/User");
-const {
-  mailgun,
-  verifyEmailTemplate,
-  mailHeader,
-} = require("../../utils/mailgun");
+const { mailgun, mailHeader } = require("../../utils/mailgun");
 const validateMongodbId = require("../../utils/validateMongodbID");
 
 //// Register user
@@ -237,8 +233,8 @@ const generateVerificationTokenCtrl = expressAsyncHandler(async (req, res) => {
   const user = await User.findById(loginUserId);
 
   // Generate token
-  const verificationToken = await user.createAccountVerificationToken();
-  console.log(verificationToken);
+  const token = await user.createAccountVerificationToken();
+  const url = `verify-account/${token}`;
   try {
     await user.save();
 
@@ -246,7 +242,7 @@ const generateVerificationTokenCtrl = expressAsyncHandler(async (req, res) => {
       email,
       firstName,
       lastName,
-      verificationToken,
+      url,
     });
 
     await mailgun()
@@ -259,7 +255,7 @@ const generateVerificationTokenCtrl = expressAsyncHandler(async (req, res) => {
         }
       });
   } catch (error) {
-    throw new Error("Can not send the email");
+    throw new Error(`Can not send the email ${error}`);
   }
   res.json({ verificationToken });
 });
@@ -285,6 +281,63 @@ const accountVerificationCtrl = expressAsyncHandler(async (req, res) => {
   res.json(userFound);
 });
 
+// Forget token generator
+const forgetPasswordToken = expressAsyncHandler(async (req, res) => {
+  // find the user by email
+  const { email } = req.body;
+  const user = await User.findOne({ email });
+  if (!user) throw new Error("User Not Found");
+
+  const token = await user.createPasswordResetToken();
+  const url = `reset-password/${token}`;
+  try {
+    await user.save();
+
+    const msg = mailHeader({
+      email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      url,
+    });
+
+    await mailgun()
+      .messages()
+      .send(msg, (error, body) => {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log(body);
+        }
+      });
+  } catch (error) {
+    throw new Error(`Can not send the email ${error}`);
+  }
+  res.json({
+    msg: `A verification message is successfully send to ${user?.email}. Reset now within 10 minutes ${token}`,
+  });
+});
+
+// Password reset
+const passwordResetCtrl = expressAsyncHandler(async (req, res) => {
+  const { token, password } = req.body;
+  const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+  // Find user by token
+  const user = await User.findOne({
+    passwordResetToken: hashedToken,
+    passwordResetExpires: { $gt: Date.now() },
+  });
+  if (!user) throw new Error("Token Expired, try again later");
+
+  // Update/change the password
+  user.password = password;
+  user.passwordResetToken = undefined;
+  user.passwordResetExpires = undefined;
+  await user.save();
+
+  res.json(user);
+});
+
 module.exports = {
   // register: registerUserCtrl
   registerUserCtrl,
@@ -301,4 +354,6 @@ module.exports = {
   unBlockUserCtrl,
   generateVerificationTokenCtrl,
   accountVerificationCtrl,
+  forgetPasswordToken,
+  passwordResetCtrl,
 };
