@@ -21,10 +21,10 @@ const {
 } = require("../../controllers/users/usersCtrl");
 const authMiddleware = require("../../middlewares/auth/authMiddleware");
 const {
-  profilePhotoUpload,
+  photoUpload,
   profilePhotoResize,
   profilePhotoResizeWithoutSaveToStorage,
-} = require("../../middlewares/uploads/profilePhotoUpload");
+} = require("../../middlewares/uploads/photoUpload");
 
 const userRoutes = express.Router();
 
@@ -35,7 +35,7 @@ userRoutes.post("/login", loginUserCtrl);
 userRoutes.put(
   "/profilephoto-upload",
   authMiddleware,
-  profilePhotoUpload.single("photo"),
+  photoUpload.single("photo"),
   profilePhotoResizeWithoutSaveToStorage,
   // Uncomment the code below and comment the code above to upload file to cloudinary without save file
   // profilePhotoResize,

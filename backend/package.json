@@ -10,6 +10,7 @@
   "author": "FreeCodeWeb",
   "license": "ISC",
   "dependencies": {
+    "bad-words": "^3.0.4",
     "bcryptjs": "^2.4.3",
     "cloudinary": "^1.32.0",
     "crypto": "^1.0.1",

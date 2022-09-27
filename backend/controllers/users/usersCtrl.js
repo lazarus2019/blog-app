@@ -9,9 +9,7 @@ const {
   cloudinaryUploadWithoutSaveToStorage,
   cloudinaryDeleteWithId,
 } = require("../../utils/cloudinary");
-const {
-  removeFileByPath,
-} = require("../../middlewares/uploads/profilePhotoUpload");
+const { removeFileByPath } = require("../../middlewares/uploads/photoUpload");
 const { getPublicId } = require("../../utils/uploadFile");
 
 //// Register user
@@ -97,7 +95,7 @@ const userProfileCtrl = expressAsyncHandler(async (req, res) => {
   const { id } = req.params;
   validateMongodbId(id);
   try {
-    const myProfile = await User.findById(id);
+    const myProfile = await User.findById(id).populate("posts");
     res.json(myProfile);
   } catch (error) {
     res.json(error);

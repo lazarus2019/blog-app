@@ -35,6 +35,10 @@ const userSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    isBlocked: {
+      type: Boolean,
+      default: false,
+    },
     blockUsers: {
       type: [
         {
@@ -96,6 +100,13 @@ const userSchema = new mongoose.Schema(
   },
   schemaOptions
 );
+
+// Create virtual for join posts by populate
+userSchema.virtual("posts", {
+  ref: "Post",
+  foreignField: "user", // reference field in Post
+  localField: "_id",
+});
 
 // Hash password
 userSchema.pre("save", async function (next) {
