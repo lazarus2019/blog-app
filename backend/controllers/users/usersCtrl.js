@@ -7,10 +7,12 @@ const validateMongodbId = require("../../utils/validateMongodbID");
 const {
   cloudinaryUploadImg,
   cloudinaryUploadWithoutSaveToStorage,
+  cloudinaryDeleteWithId,
 } = require("../../utils/cloudinary");
 const {
   removeFileByPath,
 } = require("../../middlewares/uploads/profilePhotoUpload");
+const { getPublicId } = require("../../utils/uploadFile");
 
 //// Register user
 const registerUserCtrl = expressAsyncHandler(async (req, res) => {
@@ -372,6 +374,12 @@ const profilePhotoUploadCtrl = expressAsyncHandler(async (req, res) => {
   res.json(foundUser);
 });
 
+const removeFileByPublicId = expressAsyncHandler(async (req, res) => {
+  const { public_url } = req.body;
+  cloudinaryDeleteWithId(getPublicId(public_url));
+  res.json("Deleted successfully");
+});
+
 module.exports = {
   // register: registerUserCtrl
   registerUserCtrl,
@@ -391,4 +399,5 @@ module.exports = {
   forgetPasswordToken,
   passwordResetCtrl,
   profilePhotoUploadCtrl,
+  removeFileByPublicId,
 };

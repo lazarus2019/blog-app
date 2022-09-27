@@ -49,4 +49,19 @@ const cloudinaryUploadWithoutSaveToStorage = async (fileUpload) => {
   }
 };
 
-module.exports = { cloudinaryUploadImg, cloudinaryUploadWithoutSaveToStorage };
+const cloudinaryDeleteWithId = async (id) => {
+  cloudinaryConfig();
+  try {
+    await cloudinary.uploader.destroy(id, (result) => {
+      console.log({ result });
+    });
+  } catch (error) {
+    throw new Error(error.toString());
+  }
+};
+
+module.exports = {
+  cloudinaryUploadImg,
+  cloudinaryUploadWithoutSaveToStorage,
+  cloudinaryDeleteWithId,
+};

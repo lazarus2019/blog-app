@@ -17,6 +17,7 @@ const {
   forgetPasswordToken,
   passwordResetCtrl,
   profilePhotoUploadCtrl,
+  removeFileByPublicId,
 } = require("../../controllers/users/usersCtrl");
 const authMiddleware = require("../../middlewares/auth/authMiddleware");
 const {
@@ -40,6 +41,8 @@ userRoutes.put(
   // profilePhotoResize,
   profilePhotoUploadCtrl
 );
+
+userRoutes.put("/delete-file", removeFileByPublicId);
 
 userRoutes.get("/", authMiddleware, fetchUsersCtrl);
 
