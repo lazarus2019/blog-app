@@ -3,7 +3,7 @@ exports.schemaOptions = {
     virtuals: true,
   },
   toObject: {
-      virtuals: true
+    virtuals: true,
   },
-  timestamp: true
+  timestamps: true,
 };

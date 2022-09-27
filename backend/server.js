@@ -5,6 +5,7 @@ const dotenv = require("dotenv");
 const userRoutes = require("./route/users/usersRoute");
 const { errorHandler, notFound } = require("./middlewares/error/errorHandler");
 const postRoutes = require("./route/posts/postsRoute");
+const commentRoutes = require("./route/comments/commentRoute");
 // Config env file
 dotenv.config();
 
@@ -19,6 +20,9 @@ app.use("/api/users", userRoutes);
 
 // Posts route
 app.use("/api/posts", postRoutes);
+
+// Comment route
+app.use("/api/comments", commentRoutes);
 
 // error handler: MUST below all the routes
 app.use(notFound); // error handle will take error from notfound so it must above
