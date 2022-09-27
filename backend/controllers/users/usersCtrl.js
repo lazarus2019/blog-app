@@ -4,6 +4,13 @@ const crypto = require("crypto");
 const User = require("../../model/user/User");
 const { mailgun, mailHeader } = require("../../utils/mailgun");
 const validateMongodbId = require("../../utils/validateMongodbID");
+const {
+  cloudinaryUploadImg,
+  cloudinaryUploadWithoutSaveToStorage,
+} = require("../../utils/cloudinary");
+const {
+  removeFileByPath,
+} = require("../../middlewares/uploads/profilePhotoUpload");
 
 //// Register user
 const registerUserCtrl = expressAsyncHandler(async (req, res) => {
@@ -281,7 +288,7 @@ const accountVerificationCtrl = expressAsyncHandler(async (req, res) => {
   res.json(userFound);
 });
 
-// Forget token generator
+//// Forget token generator
 const forgetPasswordToken = expressAsyncHandler(async (req, res) => {
   // find the user by email
   const { email } = req.body;
@@ -317,7 +324,7 @@ const forgetPasswordToken = expressAsyncHandler(async (req, res) => {
   });
 });
 
-// Password reset
+//// Password reset
 const passwordResetCtrl = expressAsyncHandler(async (req, res) => {
   const { token, password } = req.body;
   const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
@@ -338,6 +345,33 @@ const passwordResetCtrl = expressAsyncHandler(async (req, res) => {
   res.json(user);
 });
 
+//// Profile photo upload
+const profilePhotoUploadCtrl = expressAsyncHandler(async (req, res) => {
+  const { _id } = req.user;
+
+  //// Way 1: Upload file => save to storage => resizing => upload to cloudinary
+  // 1. Get the oath to img
+  // const localPath = `public/images/profile/${req.file.filename}`;
+  // 2. Upload to cloudinary
+  // const imgUploaded = await cloudinaryUploadImg(localPath);
+
+  //// Way 2: Upload file => resizing and convert to buffer => upload to cloudinary
+  const imgUploaded = await cloudinaryUploadWithoutSaveToStorage(req.file);
+
+  // Update user profile photo URL
+  const foundUser = await User.findByIdAndUpdate(
+    _id,
+    {
+      profilePhoto: imgUploaded?.url,
+    },
+    { new: true }
+  );
+
+  // Only use this if save file to storage (Way 1)
+  // await removeFileByPath(localPath);
+  res.json(foundUser);
+});
+
 module.exports = {
   // register: registerUserCtrl
   registerUserCtrl,
@@ -356,4 +390,5 @@ module.exports = {
   accountVerificationCtrl,
   forgetPasswordToken,
   passwordResetCtrl,
+  profilePhotoUploadCtrl,
 };
