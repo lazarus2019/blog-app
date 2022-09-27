@@ -10,21 +10,6 @@ const mailgun = () => {
 };
 
 const mailHeader = (data) => {
-  const { email, firstName, lastName, url, subject } = data;
-  return {
-    from: "Freecodeweb <freecodeweb@mg.freecodeweb.com>",
-    to: `${firstName} ${lastName} <${email}>`,
-    subject: subject ? subject : `Verify Account`,
-    html: verifyEmailTemplate({
-      email,
-      firstName,
-      lastName,
-      url,
-    }),
-  };
-};
-
-const mailHeader2 = (data) => {
   const { email, firstName, lastName, subject, html } = data;
   return {
     from: "Freecodeweb <freecodeweb@mg.freecodeweb.com>",
@@ -35,7 +20,7 @@ const mailHeader2 = (data) => {
 };
 
 const verifyEmailTemplate = (data) => {
-  const { email, firstName, lastName, url } = data;
+  const { email, firstName, lastName, url, address } = data;
   return `
       <!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
@@ -225,8 +210,12 @@ Thank you for choosing Mailgun! Please confirm your email address by clicking th
 
   <!--[if mso]><style>.v-button {background: transparent !important;}</style><![endif]-->
 <div align="center">
-  <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="http://localhost:${process.env.PORT}/${url}" style="height:42px; v-text-anchor:middle; width:331px;" arcsize="16.5%"  stroke="f" fillcolor="#3acc95"><w:anchorlock/><center style="color:#FFFFFF;font-family:'Open Sans',sans-serif;"><![endif]-->
-    <a href="http://localhost:${process.env.PORT}/${url}" target="_blank" class="v-button v-size-width" style="box-sizing: border-box;display: inline-block;font-family:'Open Sans',sans-serif;text-decoration: none;-webkit-text-size-adjust: none;text-align: center;color: #FFFFFF; background-color: #3acc95; border-radius: 7px;-webkit-border-radius: 7px; -moz-border-radius: 7px; width:57%; max-width:100%; overflow-wrap: break-word; word-break: break-word; word-wrap:break-word; mso-border-alt: none;">
+  <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="http://localhost:${
+    process.env.PORT
+  }/${url}" style="height:42px; v-text-anchor:middle; width:331px;" arcsize="16.5%"  stroke="f" fillcolor="#3acc95"><w:anchorlock/><center style="color:#FFFFFF;font-family:'Open Sans',sans-serif;"><![endif]-->
+    <a href="http://localhost:${
+      process.env.PORT
+    }/${url}" target="_blank" class="v-button v-size-width" style="box-sizing: border-box;display: inline-block;font-family:'Open Sans',sans-serif;text-decoration: none;-webkit-text-size-adjust: none;text-align: center;color: #FFFFFF; background-color: #3acc95; border-radius: 7px;-webkit-border-radius: 7px; -moz-border-radius: 7px; width:57%; max-width:100%; overflow-wrap: break-word; word-break: break-word; word-wrap:break-word; mso-border-alt: none;">
       <span style="display:block;padding:10px 20px;line-height:120%;"><span style="font-size: 18px; line-height: 21.6px;"><strong>Verify your email address</strong></span></span>
     </a>
   <!--[if mso]></center></v:roundrect><![endif]-->
@@ -313,7 +302,9 @@ Thank you for choosing Mailgun! Please confirm your email address by clicking th
       <td class="v-container-padding-padding" style="overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:'Open Sans',sans-serif;" align="left">
 
   <div style="line-height: 140%; text-align: left; word-wrap: break-word;">
-    <p style="font-size: 14px; line-height: 140%; text-align: center;"><span style="color: #ffffff; font-size: 14px; line-height: 19.6px;">{address}</span></p>
+    <p style="font-size: 14px; line-height: 140%; text-align: center;"><span style="color: #ffffff; font-size: 14px; line-height: 19.6px;">${
+      address ? address : "Montreal, Canada"
+    }</span></p>
   </div>
 
       </td>
@@ -735,7 +726,9 @@ const basicEmailTemplate = (data) => {
                                           "
                                           >Hi ${
                                             firstName ? firstName : "Buddy"
-                                          } ${lastName ? lastName : ""},</span
+                                          }${
+    lastName ? " " + lastName : ","
+  }</span
                                         ></strong
                                       ></span
                                     >
@@ -1173,5 +1166,4 @@ module.exports = {
   verifyEmailTemplate,
   basicEmailTemplate,
   mailHeader,
-  mailHeader2,
 };

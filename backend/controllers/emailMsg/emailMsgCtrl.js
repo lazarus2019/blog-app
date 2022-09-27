@@ -2,7 +2,7 @@ const expressAsyncHandler = require("express-async-handler");
 const EmailMsg = require("../../model/EmailMessaging/EmailMessaging");
 const {
   mailgun,
-  mailHeader2,
+  mailHeader,
   basicEmailTemplate,
 } = require("../../utils/mailgun");
 const validateMongodbId = require("../../utils/validateMongodbID");
@@ -12,7 +12,7 @@ const sendEmailMsgCtrl = expressAsyncHandler(async (req, res) => {
   const { to, subject, message } = req.body;
 
   try {
-    const msg = mailHeader2({
+    const msg = mailHeader({
       email: to,
       firstName: req?.user?.firstName,
       lastName: req?.user?.lastName,

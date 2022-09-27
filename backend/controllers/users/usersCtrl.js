@@ -2,7 +2,11 @@ const expressAsyncHandler = require("express-async-handler");
 const generateToken = require("../../config/token/generateToken");
 const crypto = require("crypto");
 const User = require("../../model/user/User");
-const { mailgun, mailHeader } = require("../../utils/mailgun");
+const {
+  mailgun,
+  mailHeader,
+  verifyEmailTemplate,
+} = require("../../utils/mailgun");
 const validateMongodbId = require("../../utils/validateMongodbID");
 const {
   cloudinaryUploadImg,
@@ -249,7 +253,12 @@ const generateVerificationTokenCtrl = expressAsyncHandler(async (req, res) => {
       email,
       firstName,
       lastName,
-      url,
+      html: verifyEmailTemplate({
+        email,
+        firstName,
+        lastName,
+        url,
+      }),
     });
 
     await mailgun()
@@ -264,7 +273,7 @@ const generateVerificationTokenCtrl = expressAsyncHandler(async (req, res) => {
   } catch (error) {
     throw new Error(`Can not send the email ${error}`);
   }
-  res.json({ verificationToken });
+  res.json({ token });
 });
 
 //// Account verification
@@ -304,7 +313,12 @@ const forgetPasswordToken = expressAsyncHandler(async (req, res) => {
       email,
       firstName: user.firstName,
       lastName: user.lastName,
-      url,
+      html: verifyEmailTemplate({
+        email,
+        firstName,
+        lastName,
+        url,
+      }),
     });
 
     await mailgun()
