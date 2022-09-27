@@ -63,7 +63,9 @@ const fetchPostCtrl = expressAsyncHandler(async (req, res) => {
   validateMongodbId(id);
 
   try {
-    const post = await Post.findById(id).populate("user"); // join with user
+    const post = await (
+      await Post.findById(id).populate("user").populate("disLikes")
+    ).populated("likes"); // join with user, disLikes and likes
     // Update number of views
     await Post.findByIdAndUpdate(id, {
       $inc: { numViews: 1 },
@@ -107,10 +109,122 @@ const deletePostCtrl = expressAsyncHandler(async (req, res) => {
   }
 });
 
+//// Likes
+const toggleAddLikeToPostCtrl = expressAsyncHandler(async (req, res) => {
+  // 1. Find the post to like
+  const { postId } = req.body;
+  validateMongodbId(postId);
+  const post = await Post.findById(postId);
+
+  // 2. Find the login user
+  const loginUserId = req?.user?._id;
+
+  // 3. Check if this user has like this post
+  const alreadyLiked = post?.likes.find(
+    (userId) => userId?.toString() === loginUserId?.toString()
+  );
+
+  // 4. Check if this user has dislikes this post
+  const alreadyDisliked = post?.disLikes.find(
+    (userId) => userId?.toString() === loginUserId?.toString()
+  );
+
+  // 5. Remove the user from dislikes array if exists
+  if (alreadyDisliked) {
+    const post = await Post.findByIdAndUpdate(
+      postId,
+      {
+        $pull: { disLikes: loginUserId },
+      },
+      { new: true }
+    );
+  }
+
+  // Toggle
+  // Remove the user if he has liked the post
+  if (alreadyLiked) {
+    const post = await Post.findByIdAndUpdate(
+      postId,
+      {
+        $pull: { likes: loginUserId },
+      },
+      { new: true }
+    );
+    res.json(post);
+  } else {
+    // Add to likes
+    const post = await Post.findByIdAndUpdate(
+      postId,
+      {
+        $push: { likes: loginUserId },
+      },
+      { new: true }
+    );
+    res.json(post);
+  }
+});
+
+//// Dislikes
+const toggleAddDislikeToPostCtrl = expressAsyncHandler(async (req, res) => {
+  // 1. Find the post to be dislike
+  const { postId } = req.body;
+  validateMongodbId(postId);
+  const post = await Post.findById(postId);
+
+  // 2. Find the login user
+  const loginUserId = req?.user?._id;
+
+  // 3. Check if this user has dislikes this post
+  const alreadyDisliked = post?.disLikes.find(
+    (userId) => userId?.toString() === loginUserId?.toString()
+  );
+
+  // 4. Check if this user has like this post
+  const alreadyLiked = post?.likes.find(
+    (userId) => userId?.toString() === loginUserId?.toString()
+  );
+
+  // 5. Remove the user from likes array if exists
+  if (alreadyLiked) {
+    const post = await Post.findByIdAndUpdate(
+      postId,
+      {
+        $pull: { likes: loginUserId },
+      },
+      { new: true }
+    );
+  }
+
+  // Toggle
+  // Remove the user if he has dislikes the post
+  if (alreadyDisliked) {
+    const post = await Post.findByIdAndUpdate(
+      postId,
+      {
+        $pull: { disLikes: loginUserId },
+      },
+      { new: true }
+    );
+    res.json(post);
+  } else {
+    // Add to dislikes
+    const post = await Post.findByIdAndUpdate(
+      postId,
+      {
+        $push: { disLikes: loginUserId },
+      },
+      { new: true }
+    );
+    res.json(post);
+  }
+});
+
 module.exports = {
   createPostCtrl,
   fetchPostsCtrl,
   fetchPostCtrl,
   updatePostCtrl,
   deletePostCtrl,
+  toggleAddLikeToPostCtrl,
+  toggleAddDislikeToPostCtrl,
 };
