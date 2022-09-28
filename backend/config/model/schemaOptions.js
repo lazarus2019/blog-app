@@ -1,4 +1,4 @@
-exports.schemaOptions = {
+const schemaOptions = {
   toJSON: {
     virtuals: true,
   },
@@ -7,3 +7,5 @@ exports.schemaOptions = {
   },
   timestamps: true,
 };
+
+module.exports = schemaOptions;

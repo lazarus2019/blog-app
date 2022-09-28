@@ -7,6 +7,7 @@ const { errorHandler, notFound } = require("./middlewares/error/errorHandler");
 const postRoutes = require("./route/posts/postsRoute");
 const commentRoutes = require("./route/comments/commentRoute");
 const emailMsgRoutes = require("./route/emailMsg/emailMsgRoute");
+const categoryRoutes = require("./route/category/categoryRoute");
 // Config env file
 dotenv.config();
 
@@ -26,7 +27,10 @@ app.use("/api/posts", postRoutes);
 app.use("/api/comments", commentRoutes);
 
 // Email route
-app.use('/api/email', emailMsgRoutes)
+app.use("/api/email", emailMsgRoutes);
+
+// Category route
+app.use("/api/category", categoryRoutes);
 
 // error handler: MUST below all the routes
 app.use(notFound); // error handle will take error from notfound so it must above
