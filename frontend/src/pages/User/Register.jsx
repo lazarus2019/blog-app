@@ -2,6 +2,8 @@ import React from "react";
 import PropTypes from "prop-types";
 import { useFormik } from "formik";
 import * as yup from "yup";
+import { useDispatch, useSelector } from "react-redux";
+import { registerUserAction } from "@/redux/slices/usersSlice";
 
 // Form schema
 const formSchema = yup.object({
@@ -18,6 +20,9 @@ const formSchema = yup.object({
 });
 
 function Register(props) {
+  // dispatch
+  const dispatch = useDispatch();
+
   // formik
   const formik = useFormik({
     initialValues: {
@@ -27,12 +32,12 @@ function Register(props) {
       password: "",
     },
     onSubmit: (values) => {
+      // dispatch the action
+      dispatch(registerUserAction(values));
       console.log(values);
     },
     validationSchema: formSchema,
   });
-
-  console.log(formik);
 
   return (
     <section className="relative py-20 2xl:py-40 bg-gray-800 overflow-hidden">
