@@ -4,7 +4,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 // register action
 export const registerUserAction = createAsyncThunk(
-  "users/register",
+  "user/register",
   async (user, { rejectWithValue, getState, dispatch }) => {
     try {
       const res = await userApi.register(user);
@@ -18,12 +18,25 @@ export const registerUserAction = createAsyncThunk(
 
 // login action
 export const loginUserAction = createAsyncThunk(
-  "users/login",
+  "user/login",
   async (userData, { rejectWithValue, getState, dispatch }) => {
     try {
       const res = await userApi.login(userData);
       localStorage.setItem(storageKeys.USER, JSON.stringify(res));
       return res;
+    } catch (error) {
+      if (!error?.response) throw error;
+      return rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
+// Logout action
+export const logoutAction = createAsyncThunk(
+  "/user/logout",
+  async (payload, { rejectWithValue, getState, dispatch }) => {
+    try {
+      localStorage.removeItem(storageKeys.USER);
     } catch (error) {
       if (!error?.response) throw error;
       return rejectWithValue(error?.response?.data);
@@ -76,6 +89,22 @@ const usersSlice = createSlice({
       state.serverErr = undefined;
     },
     [loginUserAction.rejected]: (state, action) => {
+      state.loading = false;
+      state.appErr = action?.payload?.message;
+      state.serverErr = action?.error?.message;
+    },
+
+    // Logout
+    [logoutAction.pending]: (state, action) => {
+      state.loading = false;
+    },
+    [logoutAction.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.userAuth = undefined;
+      state.appErr = undefined;
+      state.serverErr = undefined;
+    },
+    [logoutAction.rejected]: (state, action) => {
       state.loading = false;
       state.appErr = action?.payload?.message;
       state.serverErr = action?.error?.message;
