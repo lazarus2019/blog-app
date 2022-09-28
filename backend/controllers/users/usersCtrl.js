@@ -23,7 +23,7 @@ const registerUserCtrl = expressAsyncHandler(async (req, res) => {
 
   try {
     // Register user
-    const user = User.create({
+    const user = await User.create({
       firstName: req?.body?.firstName,
       lastName: req?.body?.lastName,
       email: req?.body?.email,

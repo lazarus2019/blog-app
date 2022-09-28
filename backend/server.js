@@ -8,14 +8,19 @@ const postRoutes = require("./route/posts/postsRoute");
 const commentRoutes = require("./route/comments/commentRoute");
 const emailMsgRoutes = require("./route/emailMsg/emailMsgRoute");
 const categoryRoutes = require("./route/category/categoryRoute");
+const cors = require("cors");
 // Config env file
 dotenv.config();
 
 // DB
 dbConnect();
 
+// Allow CORS policy
+app.use(cors());
+
 // Middleware
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Users route
 app.use("/api/users", userRoutes);
