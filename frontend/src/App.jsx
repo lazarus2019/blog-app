@@ -4,6 +4,7 @@ import Login from "./pages/User/Login";
 import Register from "./pages/User/Register";
 
 function App() {
+  // console.log(import.meta.env.VITE_MY_KEY);
   return (
     <BrowserRouter>
       <Routes>

@@ -71,7 +71,7 @@ function Register(props) {
                     {/* display error message */}
                     {appErr || serverErr ? (
                       <div className="text-red-400">
-                        {serverErr} {appErr}
+                        {serverErr} - {appErr}
                       </div>
                     ) : null}
                   </h3>

@@ -10,4 +10,5 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  // envPrefix: "@", // custom prefix vite env (default: VITE_), using: import.meta.env.VITE_MY_KEY
 });
