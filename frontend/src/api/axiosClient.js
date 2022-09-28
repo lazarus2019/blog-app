@@ -1,3 +1,4 @@
+import storageKeys from "@/constants";
 import axios from "axios";
 import queryString from "query-string";
 
@@ -6,6 +7,9 @@ const axiosClient = axios.create({
   paramsSerializer: (params) => queryString.stringify({ params }),
 });
 
+const getToken = () =>
+  JSON.parse(localStorage.getItem(storageKeys.USER))?.token;
+
 // Interceptors
 axiosClient.interceptors.request.use(
   (config) => {
@@ -13,6 +17,7 @@ axiosClient.interceptors.request.use(
       ...config,
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${getToken()}`,
       },
     };
   },
