@@ -4,6 +4,7 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { registerUserAction } from "@/redux/slices/usersSlice";
+import { Navigate } from "react-router-dom";
 
 // Form schema
 const formSchema = yup.object({
@@ -15,7 +16,7 @@ const formSchema = yup.object({
     .email("Please enter a valid email address"),
   password: yup
     .string()
-    .required("Last Name is required")
+    .required("Password is required")
     .min(6, "Password must at least 6 characters"),
 });
 
@@ -39,6 +40,14 @@ function Register(props) {
     validationSchema: formSchema,
   });
 
+  // select state from store
+  const userStore = useSelector((store) => store?.users);
+  const { loading, registered, appErr, serverErr } = userStore;
+
+  if (registered) {
+    return <Navigate to="/profile" />;
+  }
+
   return (
     <section className="relative py-20 2xl:py-40 bg-gray-800 overflow-hidden">
       <div className="relative container px-4 mx-auto">
@@ -59,7 +68,14 @@ function Register(props) {
                 <form onSubmit={formik.handleSubmit}>
                   <h3 className="mb-10 text-2xl text-white font-bold font-heading">
                     Register Account
+                    {/* display error message */}
+                    {appErr || serverErr ? (
+                      <div className="text-red-400">
+                        {serverErr} {appErr}
+                      </div>
+                    ) : null}
                   </h3>
+
                   {/* First name */}
                   <div className="flex items-center pl-6 mb-3 bg-white rounded-full">
                     <span className="inline-block pr-3 py-2 border-r border-gray-50">
@@ -72,8 +88,8 @@ function Register(props) {
                         xmlns="http://www.w3.org/2000/svg"
                       >
                         <path
-                          fill-rule="evenodd"
-                          clip-rule="evenodd"
+                          fillRule="evenodd"
+                          clipRule="evenodd"
                           d="M7.29593 0.492188C4.81333 0.492188 2.80078 2.50474 2.80078 4.98734C2.80078 7.46993 4.81333 9.48248 7.29593 9.48248C9.77851 9.48248 11.7911 7.46993 11.7911 4.98734C11.7911 2.50474 9.77851 0.492188 7.29593 0.492188ZM3.69981 4.98734C3.69981 3.00125 5.30985 1.39122 7.29593 1.39122C9.28198 1.39122 10.892 3.00125 10.892 4.98734C10.892 6.97342 9.28198 8.58346 7.29593 8.58346C5.30985 8.58346 3.69981 6.97342 3.69981 4.98734Z"
                           fill="black"
                         ></path>
@@ -125,8 +141,8 @@ function Register(props) {
                         xmlns="http://www.w3.org/2000/svg"
                       >
                         <path
-                          fill-rule="evenodd"
-                          clip-rule="evenodd"
+                          fillRule="evenodd"
+                          clipRule="evenodd"
                           d="M7.29593 0.492188C4.81333 0.492188 2.80078 2.50474 2.80078 4.98734C2.80078 7.46993 4.81333 9.48248 7.29593 9.48248C9.77851 9.48248 11.7911 7.46993 11.7911 4.98734C11.7911 2.50474 9.77851 0.492188 7.29593 0.492188ZM3.69981 4.98734C3.69981 3.00125 5.30985 1.39122 7.29593 1.39122C9.28198 1.39122 10.892 3.00125 10.892 4.98734C10.892 6.97342 9.28198 8.58346 7.29593 8.58346C5.30985 8.58346 3.69981 6.97342 3.69981 4.98734Z"
                           fill="black"
                         ></path>
@@ -178,8 +194,8 @@ function Register(props) {
                         xmlns="http://www.w3.org/2000/svg"
                       >
                         <path
-                          fill-rule="evenodd"
-                          clip-rule="evenodd"
+                          fillRule="evenodd"
+                          clipRule="evenodd"
                           d="M7.29593 0.492188C4.81333 0.492188 2.80078 2.50474 2.80078 4.98734C2.80078 7.46993 4.81333 9.48248 7.29593 9.48248C9.77851 9.48248 11.7911 7.46993 11.7911 4.98734C11.7911 2.50474 9.77851 0.492188 7.29593 0.492188ZM3.69981 4.98734C3.69981 3.00125 5.30985 1.39122 7.29593 1.39122C9.28198 1.39122 10.892 3.00125 10.892 4.98734C10.892 6.97342 9.28198 8.58346 7.29593 8.58346C5.30985 8.58346 3.69981 6.97342 3.69981 4.98734Z"
                           fill="black"
                         ></path>
@@ -254,12 +270,22 @@ function Register(props) {
 
                   <div className="inline-flex mb-10"></div>
 
-                  <button
-                    type="submit"
-                    className="py-4 w-full bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-full transition duration-200"
-                  >
-                    Register
-                  </button>
+                  {loading ? (
+                    <button
+                      disabled
+                      type="submit"
+                      className="py-4 w-full bg-gray-500 text-white font-bold rounded-full transition duration-200"
+                    >
+                      Loading please wait...
+                    </button>
+                  ) : (
+                    <button
+                      type="submit"
+                      className="py-4 w-full bg-blue-500 hover:bg-blue-600 text-white font-bold rounded-full transition duration-200"
+                    >
+                      Register
+                    </button>
+                  )}
                 </form>
               </div>
             </div>

@@ -36,7 +36,7 @@ const usersSlice = createSlice({
     [registerUserAction.rejected]: (state, action) => {
       state.loading = false;
       state.appErr = action?.payload?.message;
-      state.serverErr = action?.payload?.message;
+      state.serverErr = action?.error?.message;
     },
   },
 });
