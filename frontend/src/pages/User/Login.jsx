@@ -4,7 +4,7 @@ import * as yup from "yup";
 import { useFormik } from "formik";
 import poster from "@/assets/images/poster.png";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUserAction } from "@/redux/slices/usersSlice";
+import { loginUserAction } from "@/redux/slices/userSlice";
 import { Navigate } from "react-router";
 
 const formSchema = yup.object({
@@ -33,7 +33,7 @@ function Login(props) {
   });
 
   // Redirect
-  const userStore = useSelector((store) => store?.users);
+  const userStore = useSelector((store) => store?.user);
   const { userAuth, loading, serverErr, appErr } = userStore;
   if (userAuth) return <Navigate to="/profile" />;
 

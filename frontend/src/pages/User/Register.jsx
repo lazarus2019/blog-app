@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
-import { registerUserAction } from "@/redux/slices/usersSlice";
+import { registerUserAction } from "@/redux/slices/userSlice";
 import { Navigate } from "react-router-dom";
 
 // Form schema
@@ -41,7 +41,7 @@ function Register(props) {
   });
 
   // select state from store
-  const userStore = useSelector((store) => store?.users);
+  const userStore = useSelector((store) => store?.user);
   const { loading, registered, appErr, serverErr } = userStore;
 
   if (registered) {

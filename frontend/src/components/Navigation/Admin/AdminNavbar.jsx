@@ -13,7 +13,7 @@ import {
 import { PlusIcon } from "@heroicons/react/solid";
 import PropTypes from "prop-types";
 import { useDispatch } from "react-redux";
-import { logoutAction } from "@/redux/slices/usersSlice";
+import { logoutAction } from "@/redux/slices/userSlice";
 
 const navigation = [
   { name: "Home", href: "/", current: true },

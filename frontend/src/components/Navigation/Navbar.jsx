@@ -7,7 +7,7 @@ import { useSelector } from "react-redux";
 
 function Navbar(props) {
   // Get user from store
-  const userStore = useSelector((store) => store?.users);
+  const userStore = useSelector((store) => store?.user);
   const { userAuth } = userStore;
   const isAdmin = userAuth?.isAdmin;
 
