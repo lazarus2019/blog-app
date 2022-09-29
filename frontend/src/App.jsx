@@ -5,6 +5,7 @@ import CategoryList from "./pages/Categories/CategoryList";
 import DetailsCategory from "./pages/Categories/DetailsCategory";
 import HomePage from "./pages/HomePage/HomePage";
 import CreatePost from "./pages/Post/CreatePost";
+import PostList from "./pages/Post/PostList";
 import Login from "./pages/User/Login";
 import Register from "./pages/User/Register";
 import AdminRoute from "./protectRoute/AdminRoute";
@@ -23,6 +24,7 @@ function App() {
           <Route path="/create-post" element={<CreatePost />} />
         </Route>
         <Route element={<AdminRoute />}>
+          <Route path="/posts" element={<PostList />} />
           <Route path="/add-category" element={<AddNewCategory />} />
           <Route path="/category-list" element={<CategoryList />} />
           <Route path="/detail-category/:id" element={<DetailsCategory />} />

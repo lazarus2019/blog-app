@@ -13,6 +13,7 @@
     "@headlessui/react": "^1.7.2",
     "@heroicons/react": "^1.0.6",
     "@reduxjs/toolkit": "^1.8.5",
+    "@tailwindcss/line-clamp": "^0.4.2",
     "axios": "^0.27.2",
     "formik": "^2.2.9",
     "moment": "^2.29.4",

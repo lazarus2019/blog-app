@@ -26,6 +26,20 @@ export const createPostAction = createAsyncThunk(
   }
 );
 
+// Fetch all action
+export const fetchAllPostAction = createAsyncThunk(
+  "post/fetchAll",
+  async (category, { rejectWithValue, getState, dispatch }) => {
+    try {
+      const posts = await postApi.fetchAll(category);
+      return posts;
+    } catch (error) {
+      if (!error?.response) throw error;
+      return rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
 const initialState = {
   post: {},
 };
@@ -35,6 +49,7 @@ const postSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: {
+    // Create
     [createPostAction.pending]: (state, action) => {
       state.loading = true;
     },
@@ -49,6 +64,22 @@ const postSlice = createSlice({
       state.serverErr = undefined;
     },
     [createPostAction.rejected]: (state, action) => {
+      state.loading = false;
+      state.appErr = action?.payload?.message;
+      state.serverErr = action?.error?.message;
+    },
+
+    // Fetch all
+    [fetchAllPostAction.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [fetchAllPostAction.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.postList = action?.payload;
+      state.appErr = undefined;
+      state.serverErr = undefined;
+    },
+    [fetchAllPostAction.rejected]: (state, action) => {
       state.loading = false;
       state.appErr = action?.payload?.message;
       state.serverErr = action?.error?.message;

@@ -49,9 +49,16 @@ const createPostCtrl = expressAsyncHandler(async (req, res) => {
 
 //// Fetch all posts
 const fetchPostsCtrl = expressAsyncHandler(async (req, res) => {
+  const hasCategory = req.query.category;
   try {
-    const posts = await Post.find({}).populate("user"); // join with user
-    res.json(posts);
+    // Check if pass category in querystring
+    if (hasCategory) {
+      const posts = await Post.find({ category: hasCategory }).populate("user"); // join with user
+      res.json(posts);
+    } else {
+      const posts = await Post.find({}).populate("user"); // join with user
+      res.json(posts);
+    }
   } catch (error) {
     res.json(error);
   }
