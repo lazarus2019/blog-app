@@ -12,10 +12,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 function PostList() {
-  const postStore = useSelector((store) => store.post);
+  const postStore = useSelector((store) => store?.post);
   const { postList, loading, appErr, serverErr, likes, disLikes } = postStore;
 
-  const categoryStore = useSelector((store) => store.category);
+  const categoryStore = useSelector((store) => store?.category);
   const {
     categoryList,
     loading: cateLoading,

@@ -40,6 +40,20 @@ export const fetchAllPostAction = createAsyncThunk(
   }
 );
 
+// Fetch one action
+export const fetchOnePostAction = createAsyncThunk(
+  "post/fetchOne",
+  async (id, { rejectWithValue, getState, dispatch }) => {
+    try {
+      const post = await postApi.fetchOne(id);
+      return post;
+    } catch (error) {
+      if (!error?.response) throw error;
+      return rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
 // Toggle likes to post
 export const toggleAddLikesToPost = createAsyncThunk(
   "post/like",
@@ -112,6 +126,22 @@ const postSlice = createSlice({
       state.serverErr = undefined;
     },
     [fetchAllPostAction.rejected]: (state, action) => {
+      state.loading = false;
+      state.appErr = action?.payload?.message;
+      state.serverErr = action?.error?.message;
+    },
+
+    // Fetch one
+    [fetchOnePostAction.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [fetchOnePostAction.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.post = action?.payload;
+      state.appErr = undefined;
+      state.serverErr = undefined;
+    },
+    [fetchOnePostAction.rejected]: (state, action) => {
       state.loading = false;
       state.appErr = action?.payload?.message;
       state.serverErr = action?.error?.message;

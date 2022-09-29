@@ -5,6 +5,10 @@ const postApi = {
     const url = "posts/";
     return axiosClient.post(url, data);
   },
+  fetchOne: (id) => {
+    const url = `posts/${id}`;
+    return axiosClient.get(url);
+  },
   fetchAll: (category) => {
     const url = `posts?category=${category}`;
     return axiosClient.get(url);
