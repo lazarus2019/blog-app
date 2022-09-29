@@ -386,10 +386,23 @@ const profilePhotoUploadCtrl = expressAsyncHandler(async (req, res) => {
   res.json(foundUser);
 });
 
+//// Remove profile image from cloudinary
 const removeFileByPublicId = expressAsyncHandler(async (req, res) => {
   const { public_url } = req.body;
   cloudinaryDeleteWithId(getPublicId(public_url));
   res.json("Deleted successfully");
+});
+
+//// Get user by token
+const verifyToken = expressAsyncHandler(async (req, res) => {
+  const user = req.user;
+  res.json({
+    firstName: user?.firstName,
+    lastName: user?.lastName,
+    email: user?.email,
+    profilePhoto: user?.profilePhoto,
+    isAdmin: user?.isAdmin,
+  });
 });
 
 module.exports = {
@@ -412,4 +425,5 @@ module.exports = {
   passwordResetCtrl,
   profilePhotoUploadCtrl,
   removeFileByPublicId,
+  verifyToken,
 };

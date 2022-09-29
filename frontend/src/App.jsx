@@ -6,6 +6,7 @@ import DetailsCategory from "./pages/Categories/DetailsCategory";
 import HomePage from "./pages/HomePage/HomePage";
 import Login from "./pages/User/Login";
 import Register from "./pages/User/Register";
+import AdminRoute from "./protectRoute/AdminRoute";
 
 function App() {
   // console.log(import.meta.env.VITE_MY_KEY);
@@ -16,9 +17,11 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/add-category" element={<AddNewCategory />} />
-        <Route path="/category-list" element={<CategoryList />} />
-        <Route path="/detail-category/:id" element={<DetailsCategory />} />
+        <Route element={<AdminRoute />}>
+          <Route path="/add-category" element={<AddNewCategory />} />
+          <Route path="/category-list" element={<CategoryList />} />
+          <Route path="/detail-category/:id" element={<DetailsCategory />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );

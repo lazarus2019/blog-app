@@ -9,6 +9,10 @@ const userApi = {
     const url = "users/login";
     return axiosClient.post(url, data);
   },
+  verifyToken: () => {
+    const url = "users/verify-token";
+    return axiosClient.get(url);
+  },
 };
 
 export default userApi;
