@@ -1,13 +1,25 @@
 import axiosClient from "./axiosClient";
 
 const categoryApi = {
-  create: (data) => {
+  create: (params) => {
     const url = "category";
-    return axiosClient.post(url, data);
+    return axiosClient.post(url, params);
   },
-  update: (data) => {
-    const url = "users/login";
-    return axiosClient.put(url, data);
+  fetchOne: (id) => {
+    const url = `category/${id}`;
+    return axiosClient.get(url);
+  },
+  fetchAll: () => {
+    const url = "category";
+    return axiosClient.get(url);
+  },
+  update: (id, params) => {
+    const url = `category/${id}`;
+    return axiosClient.put(url, params);
+  },
+  delete: (id) => {
+    const url = `category/${id}`;
+    return axiosClient.delete(url);
   },
 };
 

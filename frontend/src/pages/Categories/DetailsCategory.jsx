@@ -1,10 +1,14 @@
-import { PlusCircleIcon, BookOpenIcon } from "@heroicons/react/solid";
-import PropTypes from "prop-types";
-import * as yup from "yup";
+import {
+  deleteCategoryAction,
+  fetchOneCategoryAction,
+  updateCategoryAction,
+} from "@/redux/slices/categorySlice";
+import { BookOpenIcon, PlusCircleIcon } from "@heroicons/react/solid";
 import { useFormik } from "formik";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { createCategoryAction } from "@/redux/slices/categorySlice";
-import { Navigate } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
+import * as yup from "yup";
 
 const formSchema = yup.object({
   title: yup
@@ -13,24 +17,31 @@ const formSchema = yup.object({
     .min(2, "Title must at least 2 characters"),
 });
 
-function AddNewCategory(props) {
+function DetailsCategory(props) {
+  const { id } = useParams();
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchOneCategoryAction(id));
+  }, [dispatch, id]);
+
+  const categoryStore = useSelector((store) => store.category);
+  const { loading, appErr, serverErr, category, isEdited, isDeleted } =
+    categoryStore;
+
   const formik = useFormik({
+    enableReinitialize: true,
     initialValues: {
-      title: "",
+      title: category?.title || "",
     },
     onSubmit: (values, { resetForm }) => {
-      dispatch(createCategoryAction(values));
+      dispatch(updateCategoryAction({ id, params: values }));
       resetForm();
     },
     validationSchema: formSchema,
   });
 
-  const categoryStore = useSelector((store) => store.category);
-  const { loading, appErr, serverErr, isCreated } = categoryStore;
-
-  // Redirect
-  if (isCreated) return <Navigate to="/category-list" />;
+  if (isEdited || isDeleted) return <Navigate to="/category-list" />;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -38,7 +49,7 @@ function AddNewCategory(props) {
         <div>
           <BookOpenIcon className="mx-auto h-12 w-auto" />
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Add New Category
+            Update Category
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600 font-medium text-indigo-600 hover:text-indigo-500">
             These are the categories user will select when creating a post
@@ -91,18 +102,27 @@ function AddNewCategory(props) {
                   Loading...
                 </button>
               ) : (
-                <button
-                  type="submit"
-                  className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                  <span className="absolute left-0 inset-y-0 flex items-center pl-3">
-                    <PlusCircleIcon
-                      className="h-5 w-5 text-yellow-500 group-hover:text-indigo-400"
-                      aria-hidden="true"
-                    />
-                  </span>
-                  Add new Category
-                </button>
+                <>
+                  <button
+                    type="submit"
+                    className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-yellow-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  >
+                    <span className="absolute left-0 inset-y-0 flex items-center pl-3">
+                      <PlusCircleIcon
+                        className="h-5 w-5 text-yellow-500 group-hover:text-indigo-400"
+                        aria-hidden="true"
+                      />
+                    </span>
+                    Update Category
+                  </button>
+                  <button
+                    onClick={() => dispatch(deleteCategoryAction(id))}
+                    type="submit"
+                    className="group mt-2 relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  >
+                    Delete Category
+                  </button>
+                </>
               )}
             </div>
           </div>
@@ -112,6 +132,6 @@ function AddNewCategory(props) {
   );
 }
 
-AddNewCategory.propTypes = {};
+DetailsCategory.propTypes = {};
 
-export default AddNewCategory;
+export default DetailsCategory;
