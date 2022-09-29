@@ -1,6 +1,10 @@
 import LoadingCircle from "@/components/Loading/LoadingCircle";
 import { fetchAllCategoryAction } from "@/redux/slices/categorySlice";
-import { fetchAllPostAction } from "@/redux/slices/postSlice";
+import {
+  fetchAllPostAction,
+  toggleAddLikesToPost,
+  toggleAddDisLikesToPost,
+} from "@/redux/slices/postSlice";
 import dateFormatter from "@/utils/DateFormatter";
 import { ThumbUpIcon, ThumbDownIcon, EyeIcon } from "@heroicons/react/solid";
 import { useEffect } from "react";
@@ -9,7 +13,7 @@ import { Link } from "react-router-dom";
 
 function PostList() {
   const postStore = useSelector((store) => store.post);
-  const { postList, loading, appErr, serverErr } = postStore;
+  const { postList, loading, appErr, serverErr, likes, disLikes } = postStore;
 
   const categoryStore = useSelector((store) => store.category);
   const {
@@ -25,7 +29,7 @@ function PostList() {
   useEffect(() => {
     // empty string => /posts?category => all posts without filter category
     dispatch(fetchAllPostAction(""));
-  }, [dispatch]);
+  }, [dispatch, likes, disLikes]);
 
   // Fetch all category
   useEffect(() => {
@@ -92,7 +96,9 @@ function PostList() {
               </div>
               <div className="w-full lg:w-3/4 px-3">
                 {/* Post goes here */}
-                {appErr || serverErr ? (
+                {loading ? (
+                  <LoadingCircle />
+                ) : appErr || serverErr ? (
                   <h1 className="text-yellow-600 text-center text-lg ">
                     {serverErr} {appErr}
                   </h1>
@@ -121,7 +127,12 @@ function PostList() {
                           <div className="flex flex-row justify-center items-center ml-4 mr-4 pb-2 pt-1">
                             {/* Togle like  */}
                             <div className="">
-                              <ThumbUpIcon className="h-7 w-7 text-indigo-600 cursor-pointer" />
+                              <ThumbUpIcon
+                                onClick={() =>
+                                  dispatch(toggleAddLikesToPost(post?._id))
+                                }
+                                className="h-7 w-7 text-indigo-600 cursor-pointer"
+                              />
                             </div>
                             <div className="pl-2 text-gray-600">
                               {post?.likes?.length}
@@ -130,7 +141,12 @@ function PostList() {
                           {/* Dislike */}
                           <div className="flex flex-row  justify-center items-center ml-4 mr-4 pb-2 pt-1">
                             <div>
-                              <ThumbDownIcon className="h-7 w-7 cursor-pointer text-gray-600" />
+                              <ThumbDownIcon
+                                onClick={() =>
+                                  dispatch(toggleAddDisLikesToPost(post?._id))
+                                }
+                                className="h-7 w-7 cursor-pointer text-gray-600"
+                              />
                             </div>
                             <div className="pl-2 text-gray-600">
                               {post?.disLikes?.length}

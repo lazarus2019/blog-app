@@ -40,6 +40,38 @@ export const fetchAllPostAction = createAsyncThunk(
   }
 );
 
+// Toggle likes to post
+export const toggleAddLikesToPost = createAsyncThunk(
+  "post/like",
+  async (id, { rejectWithValue, getState, dispatch }) => {
+    try {
+      const post = await postApi.toggleLike({
+        postId: id,
+      });
+      return post;
+    } catch (error) {
+      if (!error?.response) throw error;
+      return rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
+// Toggle disLikes to post
+export const toggleAddDisLikesToPost = createAsyncThunk(
+  "post/dislikes",
+  async (id, { rejectWithValue, getState, dispatch }) => {
+    try {
+      const post = await postApi.toggleDisLike({
+        postId: id,
+      });
+      return post;
+    } catch (error) {
+      if (!error?.response) throw error;
+      return rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
 const initialState = {
   post: {},
 };
@@ -80,6 +112,38 @@ const postSlice = createSlice({
       state.serverErr = undefined;
     },
     [fetchAllPostAction.rejected]: (state, action) => {
+      state.loading = false;
+      state.appErr = action?.payload?.message;
+      state.serverErr = action?.error?.message;
+    },
+
+    // Toggle Likes
+    [toggleAddLikesToPost.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [toggleAddLikesToPost.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.likes = action?.payload;
+      state.appErr = undefined;
+      state.serverErr = undefined;
+    },
+    [toggleAddLikesToPost.rejected]: (state, action) => {
+      state.loading = false;
+      state.appErr = action?.payload?.message;
+      state.serverErr = action?.error?.message;
+    },
+
+    // Toggle disLikes
+    [toggleAddDisLikesToPost.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [toggleAddDisLikesToPost.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.disLikes = action?.payload;
+      state.appErr = undefined;
+      state.serverErr = undefined;
+    },
+    [toggleAddDisLikesToPost.rejected]: (state, action) => {
       state.loading = false;
       state.appErr = action?.payload?.message;
       state.serverErr = action?.error?.message;
