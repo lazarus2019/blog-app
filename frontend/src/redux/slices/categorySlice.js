@@ -102,7 +102,7 @@ const categorySlice = createSlice({
       state.isCreated = true;
     },
     [createCategoryAction.fulfilled]: (state, action) => {
-      state.category = action?.payload;
+      state.categoryCreated = action?.payload;
       state.loading = false;
       state.isCreated = false;
       state.appErr = undefined;

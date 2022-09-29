@@ -12,7 +12,6 @@ const postSchema = new mongoose.Schema(
     category: {
       type: String,
       required: [true, "Post category is required"],
-      default: "All",
     },
     likes: {
       type: [
@@ -43,11 +42,10 @@ const postSchema = new mongoose.Schema(
       type: String,
       required: [true, "Post desciption is required"],
     },
-    images: {
-      type: [],
-      default: [
+    image: {
+      type: String,
+      default:
         "https://cdn.pixabay.com/photo/2022/09/19/15/19/meerkat-7465819_960_720.jpg",
-      ],
     },
   },
   schemaOptions

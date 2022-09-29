@@ -34,9 +34,8 @@ function DetailsCategory(props) {
     initialValues: {
       title: category?.title || "",
     },
-    onSubmit: (values, { resetForm }) => {
+    onSubmit: (values) => {
       dispatch(updateCategoryAction({ id, params: values }));
-      resetForm();
     },
     validationSchema: formSchema,
   });

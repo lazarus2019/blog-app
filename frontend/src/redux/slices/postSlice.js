@@ -1,12 +1,23 @@
 import postApi from "@/api/postApi";
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+
+// redirect action
+const resetCreateAction = createAction("post/create-reset");
 
 // Create action
 export const createPostAction = createAsyncThunk(
   "post/create",
   async (data, { rejectWithValue, getState, dispatch }) => {
     try {
-      const post = await postApi.create(data);
+      const formData = new FormData();
+      formData.append("title", data?.title);
+      formData.append("description", data?.description);
+      formData.append("category", data?.category);
+      formData.append("image", data?.image);
+
+      const post = await postApi.create(formData);
+      // Dispatch action to remove created data
+      dispatch(resetCreateAction());
       return post;
     } catch (error) {
       if (!error?.response) throw error;
@@ -27,9 +38,13 @@ const postSlice = createSlice({
     [createPostAction.pending]: (state, action) => {
       state.loading = true;
     },
+    [resetCreateAction]: (state, action) => {
+      state.isCreated = true;
+    },
     [createPostAction.fulfilled]: (state, action) => {
       state.loading = false;
-      state.post = action?.payload;
+      state.isCreated = false;
+      state.postCreated = action?.payload;
       state.appErr = undefined;
       state.serverErr = undefined;
     },

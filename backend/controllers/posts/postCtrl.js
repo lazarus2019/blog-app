@@ -37,7 +37,7 @@ const createPostCtrl = expressAsyncHandler(async (req, res) => {
     const post = await Post.create({
       ...req.body,
       user: _id,
-      $push: { images: imgUploaded?.url },
+      image: imgUploaded?.url,
     });
 
     res.json(post);

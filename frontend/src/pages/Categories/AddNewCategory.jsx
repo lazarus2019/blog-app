@@ -19,9 +19,8 @@ function AddNewCategory(props) {
     initialValues: {
       title: "",
     },
-    onSubmit: (values, { resetForm }) => {
+    onSubmit: (values) => {
       dispatch(createCategoryAction(values));
-      resetForm();
     },
     validationSchema: formSchema,
   });
