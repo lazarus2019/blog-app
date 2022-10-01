@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const { schemaOptions } = require("../../config/model/schemaOptions");
+const schemaOptions = require("../../config/model/schemaOptions");
 
 const commentSchema = new mongoose.Schema(
   {
@@ -9,7 +9,7 @@ const commentSchema = new mongoose.Schema(
       required: [true, "Post is required"],
     },
     user: {
-      type: {},
+      type: Object,
       required: [true, "User is required"],
     },
     description: {

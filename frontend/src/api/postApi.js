@@ -11,6 +11,7 @@ const postApi = {
   },
   fetchAll: (category) => {
     const url = `posts?category=${category}`;
+    // const url = `posts?category=${decodeURI("C#")}`;
     return axiosClient.get(url);
   },
   toggleLike: (id) => {

@@ -19,7 +19,6 @@ const authToken = {
 
     try {
       const res = await userApi.verifyPermission(id);
-      console.log(res);
       return res;
     } catch {
       return false;

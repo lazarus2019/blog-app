@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const { schemaOptions } = require("../../config/model/schemaOptions");
+const schemaOptions = require("../../config/model/schemaOptions");
 
 const postSchema = new mongoose.Schema(
   {
@@ -50,6 +50,13 @@ const postSchema = new mongoose.Schema(
   },
   schemaOptions
 );
+
+//populate comments
+postSchema.virtual("comments", {
+  ref: "Comment",
+  foreignField: "post",
+  localField: "_id",
+});
 
 // compile
 const Post = mongoose.model("Post", postSchema);

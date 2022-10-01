@@ -1,23 +1,33 @@
-import { Link, Navigate, useParams } from "react-router-dom";
-import { PencilAltIcon, TrashIcon } from "@heroicons/react/solid";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { deletePostAction, fetchOnePostAction } from "@/redux/slices/postSlice";
+import CommentForm from "@/components/Comment/CommentForm";
+import CommentList from "@/components/Comment/CommentList";
 import LoadingCircle from "@/components/Loading/LoadingCircle";
-import dateFormatter from "@/utils/DateFormatter";
-import authToken from "@/utils/authToken";
 import usePostPermission from "@/hooks/usePostPermission";
+import { deletePostAction, fetchOnePostAction } from "@/redux/slices/postSlice";
+import dateFormatter from "@/utils/DateFormatter";
+import { PencilAltIcon, TrashIcon } from "@heroicons/react/solid";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, Navigate, useParams } from "react-router-dom";
 
 function PostDetails(props) {
   const dispatch = useDispatch();
   const { id } = useParams();
 
-  useEffect(() => {
-    dispatch(fetchOnePostAction(id));
-  }, [dispatch, id]);
-
+  // select post details from store
   const postStore = useSelector((store) => store?.post);
   const { post, loading, appErr, serverErr, isDeleted } = postStore;
+
+  // comment
+  const commentStore = useSelector((store) => store?.comment);
+  const { commentCreated, commentDeleted } = commentStore;
+
+  // Current logged user
+  const userStore = useSelector((store) => store?.user);
+  const { userAuth } = userStore;
+
+  useEffect(() => {
+    dispatch(fetchOnePostAction(id));
+  }, [dispatch, id, commentCreated, commentDeleted]);
 
   let isPermission = false;
   if (post) {
@@ -90,10 +100,16 @@ function PostDetails(props) {
             </div>
           </div>
           {/* Add comment Form component here */}
+          {userAuth ? (
+            <CommentForm postId={id} userAuth={userAuth} />
+          ) : (
+            <h1 className="text-yellow-400 text-lg text-center">
+              You must be logged in to post a comment
+            </h1>
+          )}
 
           <div className="flex justify-center  items-center">
-            {/* <CommentsList comments={post?.comments} postId={post?._id} /> */}
-            CommentsList
+            <CommentList comments={post?.comments} postId={post?._id} />
           </div>
         </section>
       )}

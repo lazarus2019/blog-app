@@ -73,7 +73,8 @@ const fetchPostCtrl = expressAsyncHandler(async (req, res) => {
     const post = await Post.findById(id)
       .populate("user")
       .populate("disLikes")
-      .populate("likes"); // join with user, disLikes and likes
+      .populate("likes") // join with user, disLikes and likes
+      .populate("comments"); // get comments from virtual populate
     // Update number of views
     await Post.findByIdAndUpdate(id, {
       $inc: { numViews: 1 },
