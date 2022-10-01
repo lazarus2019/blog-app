@@ -16,9 +16,9 @@ function Navbar(props) {
       {!userAuth ? (
         <PublicNavbar />
       ) : isAdmin ? (
-        <AdminNavbar />
+        <AdminNavbar userAuth={userAuth} />
       ) : (
-        <PrivateNavbar />
+        <PrivateNavbar userAuth={userAuth} />
       )}
     </>
   );
