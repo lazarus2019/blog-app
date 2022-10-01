@@ -13,6 +13,10 @@ const userApi = {
     const url = "users/verify-token";
     return axiosClient.get(url);
   },
+  verifyPermission: (id) => {
+    const url = `users/verify-permission/${id}`;
+    return axiosClient.get(url );
+  },
 };
 
 export default userApi;

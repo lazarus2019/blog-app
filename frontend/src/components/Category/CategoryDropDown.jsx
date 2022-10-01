@@ -1,8 +1,7 @@
-import React, { useEffect } from "react";
-import PropTypes from "prop-types";
-import Select from "react-select";
-import { useDispatch, useSelector } from "react-redux";
 import { fetchAllCategoryAction } from "@/redux/slices/categorySlice";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import Select from "react-select";
 
 function CategoryDropDown(props) {
   const dispatch = useDispatch();
@@ -20,11 +19,11 @@ function CategoryDropDown(props) {
   }));
 
   const handleChange = (value) => {
-    props.onChange("category", value.label);
+    props.onChange("category", value);
   };
 
   const handleBlur = (value) => {
-    props.onBlur("category", value.label);
+    props.onBlur("category", value);
   };
 
   return (

@@ -1,10 +1,12 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, Navigate, useParams } from "react-router-dom";
 import { PencilAltIcon, TrashIcon } from "@heroicons/react/solid";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchOnePostAction } from "@/redux/slices/postSlice";
+import { deletePostAction, fetchOnePostAction } from "@/redux/slices/postSlice";
 import LoadingCircle from "@/components/Loading/LoadingCircle";
 import dateFormatter from "@/utils/DateFormatter";
+import authToken from "@/utils/authToken";
+import usePostPermission from "@/hooks/usePostPermission";
 
 function PostDetails(props) {
   const dispatch = useDispatch();
@@ -15,7 +17,14 @@ function PostDetails(props) {
   }, [dispatch, id]);
 
   const postStore = useSelector((store) => store?.post);
-  const { post, loading, appErr, serverErr } = postStore;
+  const { post, loading, appErr, serverErr, isDeleted } = postStore;
+
+  let isPermission = false;
+  if (post) {
+    isPermission = usePostPermission({ userId: post?.user?._id });
+  }
+
+  if (isDeleted) return <Navigate to="/posts" />;
 
   return (
     <>
@@ -63,14 +72,19 @@ function PostDetails(props) {
                   {post?.description}
 
                   {/* Show delete and update btn if created user */}
-                  <span className="flex">
-                    <Link className="p-3">
-                      <PencilAltIcon className="h-8 mt-3 text-yellow-300" />
-                    </Link>
-                    <button className="ml-3">
-                      <TrashIcon className="h-8 mt-3 text-red-600" />
-                    </button>
-                  </span>
+                  {isPermission ? (
+                    <span className="flex">
+                      <Link to={`/edit-post/${id}`} className="p-3">
+                        <PencilAltIcon className="h-8 mt-3 text-yellow-300" />
+                      </Link>
+                      <button
+                        onClick={() => dispatch(deletePostAction(id))}
+                        className="ml-3"
+                      >
+                        <TrashIcon className="h-8 mt-3 text-red-600" />
+                      </button>
+                    </span>
+                  ) : null}
                 </p>
               </div>
             </div>

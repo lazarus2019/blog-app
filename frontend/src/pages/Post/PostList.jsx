@@ -164,7 +164,10 @@ function PostList() {
                         </div>
                       </div>
                       <div className="w-full lg:w-3/4 px-3">
-                        <Link className="hover:underline">
+                        <Link
+                          to={`/posts/${post?._id}`}
+                          className="hover:underline"
+                        >
                           <h3 className="mb-1 text-2xl text-green-400 font-bold font-heading">
                             {/* {capitalizeWord(post?.title)} */} {post?.title}
                           </h3>

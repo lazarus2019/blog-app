@@ -405,6 +405,16 @@ const verifyToken = expressAsyncHandler(async (req, res) => {
   });
 });
 
+//// Check permission by token
+const verifyPermission = expressAsyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { _id } = req.user;
+
+  if (id.toString() === _id.toString()) return res.json({ isPermission: true });
+
+  res.json({ isPermission: false });
+});
+
 module.exports = {
   // register: registerUserCtrl
   registerUserCtrl,
@@ -426,4 +436,5 @@ module.exports = {
   profilePhotoUploadCtrl,
   removeFileByPublicId,
   verifyToken,
+  verifyPermission,
 };

@@ -16,7 +16,7 @@ const formSchema = yup.object({
     .string()
     .required("Description is required")
     .min(6, "Description must at least 6 characters"),
-  category: yup.string().required("Category is required"),
+  category: yup.object().required("Category is required"),
   image: yup.string().required("Thumbnail is required"),
 });
 
@@ -46,12 +46,16 @@ function CreatePost(props) {
       image: "",
     },
     onSubmit: (values) => {
-      dispatch(createPostAction(values));
+      const data = { ...values, category: values?.category?.label };
+      console.log(data);
+      dispatch(
+        createPostAction({ ...values, category: values?.category?.label })
+      );
     },
     validationSchema: formSchema,
   });
 
-  const postStore = useSelector((store) => store.post);
+  const postStore = useSelector((store) => store?.post);
   const { isCreated, appErr, serverErr, loading } = postStore;
 
   // Redirect
@@ -111,7 +115,7 @@ function CreatePost(props) {
                 Select Category
               </label>
               <CategoryDropDown
-                value={formik.values.category}
+                value={formik.values.category?.label}
                 onChange={formik.setFieldValue}
                 onBlur={formik.setFieldTouched}
                 error={formik.errors.category}

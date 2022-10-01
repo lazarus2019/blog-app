@@ -3,6 +3,8 @@ import { createAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 // redirect action
 const resetCreateAction = createAction("post/create-reset");
+const resetUpdateAction = createAction("post/update-reset");
+const resetDeleteAction = createAction("post/delete-reset");
 
 // Create action
 export const createPostAction = createAsyncThunk(
@@ -78,6 +80,38 @@ export const toggleAddDisLikesToPost = createAsyncThunk(
       const post = await postApi.toggleDisLike({
         postId: id,
       });
+      return post;
+    } catch (error) {
+      if (!error?.response) throw error;
+      return rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
+// Update post action
+export const updatePostAction = createAsyncThunk(
+  "post/update",
+  async (data, { rejectWithValue, getState, dispatch }) => {
+    try {
+      const post = await postApi.update(data?.id, data?.params);
+      // Dispatch action to remove updated data
+      dispatch(resetUpdateAction());
+      return post;
+    } catch (error) {
+      if (!error?.response) throw error;
+      return rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
+// Delete post action
+export const deletePostAction = createAsyncThunk(
+  "post/delete",
+  async (id, { rejectWithValue, getState, dispatch }) => {
+    try {
+      const post = await postApi.delete(id);
+      // Dispatch action to remove deleted data
+      dispatch(resetDeleteAction());
       return post;
     } catch (error) {
       if (!error?.response) throw error;
@@ -174,6 +208,46 @@ const postSlice = createSlice({
       state.serverErr = undefined;
     },
     [toggleAddDisLikesToPost.rejected]: (state, action) => {
+      state.loading = false;
+      state.appErr = action?.payload?.message;
+      state.serverErr = action?.error?.message;
+    },
+
+    // Update
+    [updatePostAction.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [resetUpdateAction]: (state, action) => {
+      state.isEdited = true;
+    },
+    [updatePostAction.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.isEdited = false;
+      state.postUpdated = action?.payload;
+      state.appErr = undefined;
+      state.serverErr = undefined;
+    },
+    [updatePostAction.rejected]: (state, action) => {
+      state.loading = false;
+      state.appErr = action?.payload?.message;
+      state.serverErr = action?.error?.message;
+    },
+
+    // Delete
+    [deletePostAction.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [resetDeleteAction]: (state, action) => {
+      state.isDeleted = true;
+    },
+    [deletePostAction.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.isDeleted = false;
+      state.postUpdated = action?.payload;
+      state.appErr = undefined;
+      state.serverErr = undefined;
+    },
+    [deletePostAction.rejected]: (state, action) => {
       state.loading = false;
       state.appErr = action?.payload?.message;
       state.serverErr = action?.error?.message;

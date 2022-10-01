@@ -1,9 +1,9 @@
 import axiosClient from "./axiosClient";
 
 const postApi = {
-  create: (data) => {
+  create: (params) => {
     const url = "posts/";
-    return axiosClient.post(url, data);
+    return axiosClient.post(url, params);
   },
   fetchOne: (id) => {
     const url = `posts/${id}`;
@@ -20,6 +20,14 @@ const postApi = {
   toggleDisLike: (id) => {
     const url = "posts/dislikes";
     return axiosClient.put(url, id);
+  },
+  update: (id, params) => {
+    const url = `posts/${id}`;
+    return axiosClient.put(url, params);
+  },
+  delete: (id) => {
+    const url = `posts/${id}`;
+    return axiosClient.delete(url);
   },
 };
 

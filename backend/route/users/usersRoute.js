@@ -19,6 +19,7 @@ const {
   profilePhotoUploadCtrl,
   removeFileByPublicId,
   verifyToken,
+  verifyPermission,
 } = require("../../controllers/users/usersCtrl");
 const authMiddleware = require("../../middlewares/auth/authMiddleware");
 const {
@@ -65,6 +66,9 @@ userRoutes.post("/forget-password-token", forgetPasswordToken);
 
 // Get user info by token
 userRoutes.get("/verify-token", authMiddleware, verifyToken);
+
+// Check permission by token
+userRoutes.get("/verify-permission/:id", authMiddleware, verifyPermission);
 
 // Password reset
 userRoutes.put("/reset-password", passwordResetCtrl);

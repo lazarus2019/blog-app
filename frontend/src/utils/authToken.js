@@ -13,6 +13,18 @@ const authToken = {
       return false;
     }
   },
+  isPermission: async (id) => {
+    const token = getToken();
+    if (!token) return false;
+
+    try {
+      const res = await userApi.verifyPermission(id);
+      console.log(res);
+      return res;
+    } catch {
+      return false;
+    }
+  },
 };
 
 export default authToken;
