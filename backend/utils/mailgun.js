@@ -211,10 +211,10 @@ Thank you for choosing Mailgun! Please confirm your email address by clicking th
   <!--[if mso]><style>.v-button {background: transparent !important;}</style><![endif]-->
 <div align="center">
   <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="http://localhost:${
-    process.env.PORT
+    process.env.CLIENT_PORT
   }/${url}" style="height:42px; v-text-anchor:middle; width:331px;" arcsize="16.5%"  stroke="f" fillcolor="#3acc95"><w:anchorlock/><center style="color:#FFFFFF;font-family:'Open Sans',sans-serif;"><![endif]-->
     <a href="http://localhost:${
-      process.env.PORT
+      process.env.CLIENT_PORT
     }/${url}" target="_blank" class="v-button v-size-width" style="box-sizing: border-box;display: inline-block;font-family:'Open Sans',sans-serif;text-decoration: none;-webkit-text-size-adjust: none;text-align: center;color: #FFFFFF; background-color: #3acc95; border-radius: 7px;-webkit-border-radius: 7px; -moz-border-radius: 7px; width:57%; max-width:100%; overflow-wrap: break-word; word-break: break-word; word-wrap:break-word; mso-border-alt: none;">
       <span style="display:block;padding:10px 20px;line-height:120%;"><span style="font-size: 18px; line-height: 21.6px;"><strong>Verify your email address</strong></span></span>
     </a>

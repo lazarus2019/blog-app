@@ -10,7 +10,6 @@ import PostDetails from "./pages/Post/PostDetails";
 import PostList from "./pages/Post/PostList";
 import Login from "./pages/User/Login";
 import Profile from "./pages/User/Profile";
-import Register from "./pages/User/Register";
 import AdminRoute from "./protectRoute/AdminRoute";
 import PrivateRoute from "./protectRoute/PrivateRoute";
 
@@ -18,6 +17,8 @@ import "react-responsive-modal/styles.css";
 import UploadProfilePhoto from "./pages/User/UploadProfilePhoto";
 import UpdateProfileForm from "./pages/User/UpdateProfileForm";
 import SendMail from "./pages/User/SendMail";
+import AccountVerified from "./pages/User/AccountVerified";
+import Register from "./pages/User/Register";
 
 function App() {
   // console.log(import.meta.env.VITE_MY_KEY);
@@ -30,6 +31,8 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/posts" element={<PostList />} />
         <Route path="/post/:id" element={<PostDetails />} />
+        <Route path="/profile/:id" element={<Profile />} />
+        <Route path="/verify-account/:token" element={<AccountVerified />} />
 
         <Route element={<PrivateRoute />}>
           <Route
@@ -38,7 +41,6 @@ function App() {
           />
           <Route path="/create-post" element={<CreatePost />} />
           <Route path="/edit-post/:id" element={<EditPost />} />
-          <Route path="/profile/:id" element={<Profile />} />
           <Route path="/update-profile/:id" element={<UpdateProfileForm />} />
         </Route>
 

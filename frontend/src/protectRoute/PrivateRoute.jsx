@@ -1,10 +1,10 @@
 import authToken from "@/utils/authToken";
-import { useLayoutEffect } from "react";
+import { useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 
 function PrivateRoute() {
   const navigate = useNavigate();
-  useLayoutEffect(() => {
+  useEffect(() => {
     const checkAuth = async () => {
       const isAuth = await authToken.isAuthenticated();
 
