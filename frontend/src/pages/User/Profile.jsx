@@ -14,9 +14,10 @@ import {
 import { EyeIcon, MailIcon } from "@heroicons/react/solid";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 function Profile() {
+  const navigate = useNavigate();
   const { id } = useParams();
   const dispatch = useDispatch();
 
@@ -36,6 +37,16 @@ function Profile() {
   useEffect(() => {
     dispatch(userProfileAction(id));
   }, [id, dispatch, unFollowed, followed]);
+
+  const handleSendMail = () => {
+    // Passing email as state to url
+    navigate("/send-mail", {
+      state: {
+        email: profile?.email,
+        id: profile?.id,
+      },
+    });
+  };
 
   //isLogin
   const isLoginUser = userAuth?.id === profile?._id;
@@ -182,8 +193,8 @@ function Profile() {
                                 )}
                               </>
                               {/* Send Mail */}
-                              <Link
-                                to={`/send-mail?email=${profile?.email}`}
+                              <button
+                                onClick={handleSendMail}
                                 className="inline-flex justify-center bg-indigo-900 px-4 py-2 border border-yellow-700 shadow-sm text-sm font-medium rounded-md text-gray-700  hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
                               >
                                 <MailIcon
@@ -193,7 +204,7 @@ function Profile() {
                                 <span className="text-base mr-2  text-bold text-yellow-500">
                                   Send Message
                                 </span>
-                              </Link>
+                              </button>
                             </div>
                           </div>
                         </div>

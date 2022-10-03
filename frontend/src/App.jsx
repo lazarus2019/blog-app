@@ -17,6 +17,7 @@ import PrivateRoute from "./protectRoute/PrivateRoute";
 import "react-responsive-modal/styles.css";
 import UploadProfilePhoto from "./pages/User/UploadProfilePhoto";
 import UpdateProfileForm from "./pages/User/UpdateProfileForm";
+import SendMail from "./pages/User/SendMail";
 
 function App() {
   // console.log(import.meta.env.VITE_MY_KEY);
@@ -42,6 +43,7 @@ function App() {
         </Route>
 
         <Route element={<AdminRoute />}>
+          <Route path="/send-mail" element={<SendMail />} />
           <Route path="/add-category" element={<AddNewCategory />} />
           <Route path="/category-list" element={<CategoryList />} />
           <Route path="/detail-category/:id" element={<DetailsCategory />} />
