@@ -23,7 +23,8 @@ export const verifyAccount = createAsyncThunk(
   async (token, { rejectWithValue, getState, dispatch }) => {
     try {
       const res = await verifyApi.verifyAccount({ token });
-      console.log(res);
+      // dispatch for remove token data
+      dispatch(resetVerifyAccountAction());
       return res;
     } catch (error) {
       if (!error?.response) throw error;
@@ -59,9 +60,13 @@ const verifySlice = createSlice({
     [verifyAccount.pending]: (state, action) => {
       state.loading = false;
     },
+    [resetVerifyAccountAction]: (state, action) => {
+      state.isVerified = true;
+    },
     [verifyAccount.fulfilled]: (state, action) => {
       state.loading = false;
       state.verified = action?.payload;
+      state.isVerified = false;
       state.appErr = undefined;
       state.serverErr = undefined;
     },

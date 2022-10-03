@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import PropTypes from "prop-types";
-import { useParams } from "react-router";
+import { Navigate, useParams } from "react-router";
 import { verifyAccount } from "@/redux/slices/verifySlice";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
@@ -16,8 +16,13 @@ function AccountVerified(props) {
   }, [dispatch, token]);
 
   const verifyStore = useSelector((store) => store?.verify);
-  const { loading, appErr, serverErr, verified } = verifyStore;
+  const { loading, appErr, serverErr, verified, isVerified } = verifyStore;
 
+  if (isVerified) {
+    setTimeout(() => {
+      return <Navigate to="/" />;
+    }, 3000);
+  }
   return (
     <>
       {verified ? (

@@ -47,7 +47,6 @@ function CreatePost(props) {
     },
     onSubmit: (values) => {
       const data = { ...values, category: values?.category?.label };
-      console.log(data);
       dispatch(
         createPostAction({ ...values, category: values?.category?.label })
       );

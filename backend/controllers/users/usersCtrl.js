@@ -383,7 +383,7 @@ const passwordResetCtrl = expressAsyncHandler(async (req, res) => {
 
 //// Profile photo upload
 const profilePhotoUploadCtrl = expressAsyncHandler(async (req, res) => {
-  const { _id } = req.user;
+  const { _id, profilePhoto } = req.user;
 
   //// Way 1: Upload file => save to storage => resizing => upload to cloudinary
   // 1. Get the oath to img
@@ -402,6 +402,8 @@ const profilePhotoUploadCtrl = expressAsyncHandler(async (req, res) => {
     },
     { new: true }
   );
+
+  cloudinaryDeleteWithId(getPublicId(profilePhoto));
 
   // Only use this if save file to storage (Way 1)
   // await removeFileByPath(localPath);

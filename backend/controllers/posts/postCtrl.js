@@ -3,8 +3,13 @@ const Post = require("../../model/post/Post");
 const validateMongodbId = require("../../utils/validateMongodbID");
 const Filter = require("bad-words");
 const User = require("../../model/user/User");
-const { cloudinaryUploadImg } = require("../../utils/cloudinary");
+const {
+  cloudinaryUploadImg,
+  cloudinaryDeleteWithId,
+} = require("../../utils/cloudinary");
 const { removeFileByPath } = require("../../middlewares/uploads/photoUpload");
+const mongoose = require("mongoose");
+const { getPublicId } = require("../../utils/uploadFile");
 
 //// Create post
 const createPostCtrl = expressAsyncHandler(async (req, res) => {
@@ -111,7 +116,11 @@ const deletePostCtrl = expressAsyncHandler(async (req, res) => {
   validateMongodbId(id);
 
   try {
-    const post = await Post.findOneAndDelete(id);
+    // https://stackoverflow.com/questions/64029169/findoneanddelete-mongoose-not-working-mern-stack
+    const post = await Post.findOneAndDelete({
+      _id: new mongoose.Types.ObjectId(id),
+    });
+    cloudinaryDeleteWithId(getPublicId(post?.image));
     res.json(post);
   } catch (error) {
     res.json(error);
