@@ -99,7 +99,20 @@ const userProfileCtrl = expressAsyncHandler(async (req, res) => {
   const { id } = req.params;
   validateMongodbId(id);
   try {
-    const myProfile = await User.findById(id).populate("posts");
+    // Can not use select and exclude at the same time
+    // https://www.tutorialspoint.com/mongodb-collection-query-to-exclude-some-fields-in-find
+    // https://mongoosejs.com/docs/queries.html
+    // https://viblo.asia/p/tim-hieu-ve-aggregation-framework-trong-mongodb-Az45brRV5xY#_project-operator-5
+    const myProfile = await User.findById(id)
+      .populate({
+        path: "posts",
+        options: {
+          limit: 5,
+        },
+      })
+      .select(
+        "firstName lastName profilePhoto email followers following bio isAccountVerified"
+      );
     res.json(myProfile);
   } catch (error) {
     res.json(error);
@@ -116,7 +129,6 @@ const updateUserCtrl = expressAsyncHandler(async (req, res) => {
     {
       firstName: req?.body?.firstName,
       lastName: req?.body?.lastName,
-      email: req?.body?.email,
       bio: req?.body?.bio,
     },
     {
@@ -125,7 +137,16 @@ const updateUserCtrl = expressAsyncHandler(async (req, res) => {
     }
   );
 
-  res.json(user);
+  // Send to frontend for update data in localstorage
+  res.json({
+    id: user?._id,
+    firstName: user?.firstName,
+    lastName: user?.lastName,
+    email: user?.email,
+    profilePhoto: user?.profilePhoto,
+    isAdmin: user?.isAdmin,
+    token: generateToken(user?._id),
+  });
 });
 
 //// Update password
@@ -181,7 +202,7 @@ const followingUserCtrl = expressAsyncHandler(async (req, res) => {
     { new: true }
   );
 
-  res.json("following");
+  res.json("You have successfully followed this user");
 });
 
 //// UnFollowing user

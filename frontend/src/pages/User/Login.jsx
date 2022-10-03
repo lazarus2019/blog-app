@@ -35,7 +35,8 @@ function Login(props) {
   // Redirect
   const userStore = useSelector((store) => store?.user);
   const { userAuth, loading, serverErr, appErr } = userStore;
-  if (userAuth) return <Navigate to="/profile" />;
+  console.log(userAuth);
+  if (userAuth) return <Navigate to={`/profile/${userAuth?.id}`} />;
 
   return (
     <>

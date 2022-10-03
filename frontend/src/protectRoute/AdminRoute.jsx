@@ -15,7 +15,7 @@ function AdminRoute() {
       }
     };
     checkAuth();
-  }, []);
+  }, [navigate]);
 
   return (
     <>

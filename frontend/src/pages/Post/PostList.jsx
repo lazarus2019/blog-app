@@ -113,7 +113,7 @@ function PostList() {
                       key={post?._id}
                     >
                       <div className="mb-10  w-full lg:w-1/4 px-3">
-                        <Link to={`/posts/${post?._id}`}>
+                        <Link to={`/post/${post?._id}`}>
                           {/* Post image */}
                           <img
                             className="w-full h-full object-cover rounded"
@@ -165,7 +165,7 @@ function PostList() {
                       </div>
                       <div className="w-full lg:w-3/4 px-3">
                         <Link
-                          to={`/posts/${post?._id}`}
+                          to={`/post/${post?._id}`}
                           className="hover:underline"
                         >
                           <h3 className="mb-1 text-2xl text-green-400 font-bold font-heading">
@@ -177,7 +177,7 @@ function PostList() {
                         </p>
                         {/* Read more */}
                         <Link
-                          to={`/posts/${post?._id}`}
+                          to={`/post/${post?._id}`}
                           className="text-indigo-500 hover:underline"
                         >
                           Read More
@@ -185,7 +185,7 @@ function PostList() {
                         {/* User Avatar */}
                         <div className="mt-6 flex items-center">
                           <div className="flex-shrink-0">
-                            <Link>
+                            <Link to={`/profile/${post?.user?._id}`}>
                               <img
                                 className="h-10 w-10 rounded-full"
                                 src={post?.user?.profilePhoto}
@@ -195,7 +195,10 @@ function PostList() {
                           </div>
                           <div className="ml-3">
                             <p className="text-sm font-medium text-gray-900">
-                              <Link className="text-yellow-400 hover:underline ">
+                              <Link
+                                to={`/profile/${post?.user?._id}`}
+                                className="text-yellow-400 hover:underline "
+                              >
                                 {post?.user?.firstName} {post?.user?.lastName}
                               </Link>
                             </p>

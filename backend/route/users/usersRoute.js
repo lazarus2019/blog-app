@@ -79,9 +79,9 @@ userRoutes.put("/follow", authMiddleware, followingUserCtrl);
 
 userRoutes.put("/unFollow", authMiddleware, unFollowUserCtrl);
 
-// Bring all the routes with dynamic ids /:id below other routes
-userRoutes.put("/:id", authMiddleware, updateUserCtrl);
+userRoutes.put("/", authMiddleware, updateUserCtrl);
 
+// Bring all the routes with dynamic ids /:id below other routes
 userRoutes.delete("/:id", deleteUsersCtrl);
 
 userRoutes.get("/:id", fetchUserDetailCtrl);

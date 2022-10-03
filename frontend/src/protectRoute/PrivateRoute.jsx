@@ -15,7 +15,7 @@ function PrivateRoute() {
       }
     };
     checkAuth();
-  }, []);
+  }, [navigate]);
 
   return (
     <>
