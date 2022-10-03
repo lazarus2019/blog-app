@@ -15,6 +15,8 @@ const {
 } = require("../../utils/cloudinary");
 const { removeFileByPath } = require("../../middlewares/uploads/photoUpload");
 const { getPublicId } = require("../../utils/uploadFile");
+const { mongoose } = require("mongoose");
+const blockUser = require("../../utils/blockUser");
 
 //// Register user
 const registerUserCtrl = expressAsyncHandler(async (req, res) => {
@@ -59,8 +61,16 @@ const loginUserCtrl = expressAsyncHandler(async (req, res) => {
 
 //// Fetch all users
 const fetchUsersCtrl = expressAsyncHandler(async (req, res) => {
+  const { _id } = req.user?._id;
+  // https://stackoverflow.com/questions/41224059/find-all-except-one-in-mongodb
+  // https://www.mongodb.com/docs/manual/reference/operator/query/nin/
   try {
-    const users = await User.find({}).select("-password");
+    // Get all users except logged admin
+    const users = await User.find({
+      _id: { $ne: new mongoose.Types.ObjectId(_id) },
+    })
+      .select("-password")
+      .populate("posts");
     res.json(users);
   } catch (error) {
     res.json(error);
@@ -111,9 +121,26 @@ const userProfileCtrl = expressAsyncHandler(async (req, res) => {
           limit: 5,
         },
       })
+      // .populate("viewedBy") // Uncomment this line if not use viewers visit profile
       .select(
         "firstName lastName profilePhoto email followers following bio isAccountVerified"
       );
+
+    // Uncomment start (get viewers)
+    // Get the login user
+    // const loginUserId = req?.user?._id;
+    // const alreadyViewed = myProfile?.viewedBy?.find((user) => {
+    //   return user?._id?.toString() === loginUserId;
+    // });
+
+    // if (!alreadyViewed) {
+    //   const profile = await User.findByIdAndUpdate(myProfile?._id, {
+    //     $push: { viewedBy: loginUserId },
+    //   });
+    //   res.json(profile);
+    // }
+    // Uncomment end
+
     res.json(myProfile);
   } catch (error) {
     res.json(error);
@@ -124,6 +151,8 @@ const userProfileCtrl = expressAsyncHandler(async (req, res) => {
 const updateUserCtrl = expressAsyncHandler(async (req, res) => {
   const { _id } = req?.user;
   validateMongodbId(_id);
+
+  blockUser(req?.user);
 
   const user = await User.findByIdAndUpdate(
     _id,
@@ -236,26 +265,49 @@ const unFollowUserCtrl = expressAsyncHandler(async (req, res) => {
 const blockUserCtrl = expressAsyncHandler(async (req, res) => {
   const { id } = req.params;
   validateMongodbId(id);
-  const loginUserId = req.user.id;
 
-  await User.findByIdAndUpdate(loginUserId, {
-    $push: { blockUsers: id },
-  });
+  // Block by admin start
+  const user = req.user;
+  if (user?.isAdmin) {
+    await User.findByIdAndUpdate(id, { isBlocked: true }, { new: true });
+    res.json(`Block ${Math.random()} successfully`);
+  } else {
+    throw new Error("You need permission to perform this action");
+  }
+  // Block by admin end
 
-  res.json("Block user successfully");
+  // [Uncomment start]Only for user block another user
+  // const loginUserId = req.user.id;
+
+  // await User.findByIdAndUpdate(loginUserId, {
+  //   $push: { blockUsers: id },
+  // });
+  // res.json("Block user successfully");
+  // [Uncomment end]
 });
 
 //// Un-Block user
 const unBlockUserCtrl = expressAsyncHandler(async (req, res) => {
   const { id } = req.params;
   validateMongodbId(id);
-  const loginUserId = req.user.id;
 
-  await User.findByIdAndUpdate(loginUserId, {
-    $pull: { blockUsers: id },
-  });
+  // UnBlock by admin start
+  const user = req.user;
+  if (user?.isAdmin) {
+    await User.findByIdAndUpdate(id, { isBlocked: false }, { new: true });
+    res.json(`Un-Block ${Math.random()} successfully`);
+  } else {
+    throw new Error("You need permission to perform this action");
+  }
+  // UnBlock by admin end
 
-  res.json("Un-Block user successfully");
+  // [Uncomment start]Only for user unblock another user
+  // const loginUserId = req.user.id;
+  // await User.findByIdAndUpdate(loginUserId, {
+  //   $pull: { blockUsers: id },
+  // });
+  // res.json("Un-Block user successfully");
+  // [Uncomment end]
 });
 
 //// Generate verification token
@@ -385,6 +437,8 @@ const passwordResetCtrl = expressAsyncHandler(async (req, res) => {
 const profilePhotoUploadCtrl = expressAsyncHandler(async (req, res) => {
   const { _id, profilePhoto } = req.user;
 
+  blockUser(req?.user);
+
   //// Way 1: Upload file => save to storage => resizing => upload to cloudinary
   // 1. Get the oath to img
   // const localPath = `public/images/profile/${req.file.filename}`;
@@ -438,6 +492,9 @@ const verifyPermission = expressAsyncHandler(async (req, res) => {
 
   res.json({ isPermission: false });
 });
+
+//// Fetch all user views profile
+const fetchAllViewers = expressAsyncHandler(async (req, res) => {});
 
 module.exports = {
   // register: registerUserCtrl

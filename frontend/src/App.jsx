@@ -19,6 +19,7 @@ import UpdateProfileForm from "./pages/User/UpdateProfileForm";
 import SendMail from "./pages/User/SendMail";
 import AccountVerified from "./pages/User/AccountVerified";
 import Register from "./pages/User/Register";
+import UserList from "./pages/User/UserList";
 
 function App() {
   // console.log(import.meta.env.VITE_MY_KEY);
@@ -45,6 +46,7 @@ function App() {
         </Route>
 
         <Route element={<AdminRoute />}>
+          <Route path="/users" element={<UserList />} />
           <Route path="/send-mail" element={<SendMail />} />
           <Route path="/add-category" element={<AddNewCategory />} />
           <Route path="/category-list" element={<CategoryList />} />

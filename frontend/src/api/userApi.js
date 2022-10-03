@@ -29,6 +29,18 @@ const userApi = {
     const url = "users/profilephoto-upload";
     return axiosClient.put(url, params);
   },
+  getList: () => {
+    const url = "users";
+    return axiosClient.get(url);
+  },
+  block: (id) => {
+    const url = `users/block-user/${id}`;
+    return axiosClient.put(url);
+  },
+  unBlock: (id) => {
+    const url = `users/unblock-user/${id}`;
+    return axiosClient.put(url);
+  },
   verifyToken: () => {
     const url = "users/verify-token";
     return axiosClient.get(url);

@@ -121,6 +121,48 @@ export const unFollowUserAction = createAsyncThunk(
   }
 );
 
+// [ADMIN]Fetch all users
+export const fetchAllUsersAction = createAsyncThunk(
+  "/user/list",
+  async (payload, { rejectWithValue, getState, dispatch }) => {
+    try {
+      const res = await userApi.getList();
+      return res;
+    } catch (error) {
+      if (!error?.response) throw error;
+      return rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
+// [ADMIN]Block user
+export const blockUserAction = createAsyncThunk(
+  "/user/block",
+  async (id, { rejectWithValue, getState, dispatch }) => {
+    try {
+      const res = await userApi.block(id);
+      return res;
+    } catch (error) {
+      if (!error?.response) throw error;
+      return rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
+// [ADMIN]Unblock user
+export const unBlockUserAction = createAsyncThunk(
+  "/user/unblock",
+  async (id, { rejectWithValue, getState, dispatch }) => {
+    try {
+      const res = await userApi.unBlock(id);
+      return res;
+    } catch (error) {
+      if (!error?.response) throw error;
+      return rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
 // Get user from local storage and place into store
 const userLoginFromLocalStorage = localStorage.getItem(storageKeys.USER)
   ? JSON.parse(localStorage.getItem(storageKeys.USER))
@@ -268,6 +310,54 @@ const usersSlice = createSlice({
       state.serverErr = undefined;
     },
     [unFollowUserAction.rejected]: (state, action) => {
+      state.loading = false;
+      state.appErr = action?.payload?.message;
+      state.serverErr = action?.error?.message;
+    },
+
+    // Get list users
+    [fetchAllUsersAction.pending]: (state, action) => {
+      state.loading = false;
+    },
+    [fetchAllUsersAction.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.userList = action?.payload;
+      state.appErr = undefined;
+      state.serverErr = undefined;
+    },
+    [fetchAllUsersAction.rejected]: (state, action) => {
+      state.loading = false;
+      state.appErr = action?.payload?.message;
+      state.serverErr = action?.error?.message;
+    },
+
+    // Block user
+    [blockUserAction.pending]: (state, action) => {
+      state.loading = false;
+    },
+    [blockUserAction.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.block = action?.payload;
+      state.appErr = undefined;
+      state.serverErr = undefined;
+    },
+    [blockUserAction.rejected]: (state, action) => {
+      state.loading = false;
+      state.appErr = action?.payload?.message;
+      state.serverErr = action?.error?.message;
+    },
+
+    // Get list users
+    [unBlockUserAction.pending]: (state, action) => {
+      state.loading = false;
+    },
+    [unBlockUserAction.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.unblock = action?.payload;
+      state.appErr = undefined;
+      state.serverErr = undefined;
+    },
+    [unBlockUserAction.rejected]: (state, action) => {
       state.loading = false;
       state.appErr = action?.payload?.message;
       state.serverErr = action?.error?.message;

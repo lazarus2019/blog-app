@@ -10,11 +10,13 @@ const {
 const { removeFileByPath } = require("../../middlewares/uploads/photoUpload");
 const mongoose = require("mongoose");
 const { getPublicId } = require("../../utils/uploadFile");
+const blockUser = require("../../utils/blockUser")
 
 //// Create post
 const createPostCtrl = expressAsyncHandler(async (req, res) => {
   const { _id } = req.user;
-  //   validateMongodbId(req.body.user);
+
+  blockUser(req?.user);
 
   // Check for bad words
   const filter = new Filter();
@@ -58,10 +60,12 @@ const fetchPostsCtrl = expressAsyncHandler(async (req, res) => {
   try {
     // Check if pass category in querystring
     if (hasCategory) {
-      const posts = await Post.find({ category: hasCategory }).populate("user"); // join with user
+      const posts = await Post.find({ category: hasCategory })
+        .populate("user")
+        .sort("-createdAt"); // join with user
       res.json(posts);
     } else {
-      const posts = await Post.find({}).populate("user"); // join with user
+      const posts = await Post.find({}).populate("user").sort("-createdAt"); // join with user
       res.json(posts);
     }
   } catch (error) {
