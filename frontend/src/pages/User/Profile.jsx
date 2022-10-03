@@ -74,7 +74,7 @@ function Profile() {
                         <img
                           className="h-32 w-full object-cover lg:h-48"
                           src={profile?.profilePhoto}
-                          alt={profile?.fullName}
+                          alt=""
                         />
                       </div>
                       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -83,14 +83,12 @@ function Profile() {
                             <img
                               className="h-24 w-24 rounded-full  ring-4 ring-white sm:h-32 sm:w-32"
                               src={profile?.profilePhoto}
-                              alt={profile?.fullName}
+                              alt=""
                             />
                           </div>
                           <div className="mt-6 sm:flex-1 sm:min-w-0 sm:flex sm:items-center sm:justify-end sm:space-x-6 sm:pb-1">
                             <div className=" flex flex-col 2xl:block mt-10 min-w-0 flex-1">
                               <h1 className="text-2xl font-bold text-gray-900 ">
-                                {profile?.fullName}
-
                                 <span className="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
                                   {/* {profile?.accountType} */}
                                 </span>

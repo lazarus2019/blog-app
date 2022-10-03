@@ -66,11 +66,13 @@ function PostDetails(props) {
                   alt=""
                 />
                 <div className="text-left">
-                  <h4 className="mb-1 text-2xl font-bold text-gray-50">
-                    <span className="text-xl lg:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-yellow-200 to-orange-600">
-                      {post?.user?.fullName}
-                    </span>
-                  </h4>
+                  <Link to={`/profile/${post?.user?.id}`}>
+                    <h4 className="mb-1 text-2xl font-bold text-gray-50">
+                      <span className="text-xl lg:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-yellow-200 to-orange-600">
+                        {post?.user?.firstName} {post?.user?.lastName}
+                      </span>
+                    </h4>
+                  </Link>
                   <p className="text-gray-500">
                     {dateFormatter(post?.createdAt)}
                   </p>
