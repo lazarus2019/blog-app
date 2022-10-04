@@ -6,6 +6,7 @@ import poster from "@/assets/images/poster.png";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUserAction } from "@/redux/slices/userSlice";
 import { Navigate } from "react-router";
+import { Link } from "react-router-dom";
 
 const formSchema = yup.object({
   email: yup
@@ -150,6 +151,17 @@ function Login(props) {
                       </button>
                     )}
                   </form>
+
+                  <div className="mt-4 flex items-center justify-end">
+                    <div className="text-sm">
+                      <Link
+                        to="/password-reset-token"
+                        className="font-medium text-indigo-600 hover:text-indigo-500"
+                      >
+                        Forgot your password?
+                      </Link>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div className="w-full lg:w-3/5 px-4 mb-16 lg:mb-0 order-first lg:order-last">

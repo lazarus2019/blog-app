@@ -47,7 +47,7 @@ const loginUserCtrl = expressAsyncHandler(async (req, res) => {
   if (userFound?.isBlocked) {
     throw new Error(`Access Denied ${user?.firstName} is blocked`);
   }
-  
+
   if (userFound && (await userFound.isPasswordMatched(password))) {
     res.json({
       id: userFound?._id,
@@ -189,19 +189,30 @@ const updateUserCtrl = expressAsyncHandler(async (req, res) => {
 const updateUserPasswordCtrl = expressAsyncHandler(async (req, res) => {
   // Destruct the login user
   const { _id } = req.user;
-  const { password } = req.body;
+  const { oldPassword, password } = req.body;
   validateMongodbId(_id);
 
   // Find the user by _id
   const user = await User.findById(_id);
 
-  if (password && !(await user.isPasswordMatched(password))) {
+  const isMatched = await user.isPasswordMatched(oldPassword);
+
+  if (!isMatched) {
+    throw new Error("The old password you entered is incorrect");
+  }
+
+  if (password === oldPassword) {
+    throw new Error("Your new password is to similar to your current password");
+  }
+
+  if (password) {
     user.password = password;
     const updatedUser = await user.save();
     // Put `return` before the res if cannot set header error appear
     return res.json(updatedUser);
+  } else {
+    throw new Error("New password has error");
   }
-  res.json(user);
 });
 
 //// Following user
@@ -377,7 +388,7 @@ const accountVerificationCtrl = expressAsyncHandler(async (req, res) => {
   res.json(userFound);
 });
 
-//// Forget token generator
+//// Forget password token generator
 const forgetPasswordToken = expressAsyncHandler(async (req, res) => {
   // find the user by email
   const { email } = req.body;
@@ -391,12 +402,12 @@ const forgetPasswordToken = expressAsyncHandler(async (req, res) => {
 
     const msg = mailHeader({
       email,
-      firstName: user.firstName,
-      lastName: user.lastName,
+      firstName: user?.firstName,
+      lastName: user?.lastName,
       html: verifyEmailTemplate({
         email,
-        firstName,
-        lastName,
+        firstName: user?.firstName,
+        lastName: user?.lastName,
         url,
       }),
     });
@@ -421,6 +432,7 @@ const forgetPasswordToken = expressAsyncHandler(async (req, res) => {
 //// Password reset
 const passwordResetCtrl = expressAsyncHandler(async (req, res) => {
   const { token, password } = req.body;
+
   const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
 
   // Find user by token
@@ -429,6 +441,13 @@ const passwordResetCtrl = expressAsyncHandler(async (req, res) => {
     passwordResetExpires: { $gt: Date.now() },
   });
   if (!user) throw new Error("Token Expired, try again later");
+
+  // New password must diffe
+  const isMatched = await user.isPasswordMatched(password);
+
+  if (isMatched) {
+    throw new Error("Your new password is to similar to your current password");
+  }
 
   // Update/change the password
   user.password = password;

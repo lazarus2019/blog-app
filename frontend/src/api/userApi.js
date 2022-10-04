@@ -41,6 +41,10 @@ const userApi = {
     const url = `users/unblock-user/${id}`;
     return axiosClient.put(url);
   },
+  updatePassword: (params) => {
+    const url = "users/password";
+    return axiosClient.put(url, params);
+  },
   verifyToken: () => {
     const url = "users/verify-token";
     return axiosClient.get(url);

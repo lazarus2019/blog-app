@@ -1,9 +1,11 @@
 import userApi from "@/api/userApi";
+import verifyApi from "@/api/verifyApi";
 import storageKeys from "@/constants";
 import { createSlice, createAsyncThunk, createAction } from "@reduxjs/toolkit";
 
 // redirect action
 const resetUpdateProfileAction = createAction("/user/reset-update");
+const resetPasswordAction = createAction("/user/reset-password");
 
 // register action
 export const registerUserAction = createAsyncThunk(
@@ -155,6 +157,22 @@ export const unBlockUserAction = createAsyncThunk(
   async (id, { rejectWithValue, getState, dispatch }) => {
     try {
       const res = await userApi.unBlock(id);
+      return res;
+    } catch (error) {
+      if (!error?.response) throw error;
+      return rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
+// Update password
+export const updatePasswordAction = createAsyncThunk(
+  "user/password-update",
+  async (data, { rejectWithValue, getState, dispatch }) => {
+    try {
+      const res = await userApi.updatePassword(data);
+      // dispatch for remove updated password data
+      dispatch(resetPasswordAction());
       return res;
     } catch (error) {
       if (!error?.response) throw error;
@@ -358,6 +376,26 @@ const usersSlice = createSlice({
       state.serverErr = undefined;
     },
     [unBlockUserAction.rejected]: (state, action) => {
+      state.loading = false;
+      state.appErr = action?.payload?.message;
+      state.serverErr = action?.error?.message;
+    },
+
+    // Get list users
+    [updatePasswordAction.pending]: (state, action) => {
+      state.loading = false;
+    },
+    [resetPasswordAction]: (state, action) => {
+      state.passwordUpdated = true;
+    },
+    [updatePasswordAction.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.passwordUpdated = false;
+      state.newPasswordUser = action?.payload;
+      state.appErr = undefined;
+      state.serverErr = undefined;
+    },
+    [updatePasswordAction.rejected]: (state, action) => {
       state.loading = false;
       state.appErr = action?.payload?.message;
       state.serverErr = action?.error?.message;
