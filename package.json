@@ -1,0 +1,21 @@
+{
+  "name": "blog-app",
+  "version": "1.0.0",
+  "description": "Learn, Apply, Build a Blog Project using Redux (Redux Toolkit), NodeJs, Express, MongoDB, React js, Tailwindcss",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "cd backend && npm install  && cd ../frontend && npm install && npm run build",
+    "start": "node backend/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lazarus2019/blog-app.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lazarus2019/blog-app/issues"
+  },
+  "homepage": "https://github.com/lazarus2019/blog-app#readme"
+}
