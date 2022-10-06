@@ -3,7 +3,7 @@ import axios from "axios";
 import queryString from "query-string";
 
 const axiosClient = axios.create({
-  baseURL: "http://localhost:5000/api/",
+  baseURL: import.meta.env.VITE_BASE_API,
   paramsSerializer: (params) => queryString.stringify({ params }),
 });
 

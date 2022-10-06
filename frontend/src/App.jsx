@@ -25,7 +25,6 @@ import ResetPassword from "./pages/User/ResetPassword";
 import ResetPasswordForm from "./pages/User/ResetPasswordForm";
 
 function App() {
-  // console.log(import.meta.env.VITE_MY_KEY);
   return (
     <BrowserRouter>
       <Navbar />
